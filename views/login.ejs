@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html class="login-page" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Sign In - HANAP CSPC</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#2B5B84",
+            "primary-hover": "#1E40AF",
+            "primary-container": "#2B5B84",
+            "on-primary": "#ffffff",
+            "background": "#F4F7FB",
+            "on-surface": "#0F172A",
+            "text-muted": "#64748B",
+            "border-subtle": "#E2E8F0",
+            "secondary": "#0058be"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="login-page bg-[#F4F7FB] text-[#0F172A] font-sans antialiased min-h-screen relative overflow-x-hidden selection:bg-blue-500/20">
+  <main class="relative w-full min-h-screen bg-[#F4F7FB] flex items-center justify-center p-4 sm:p-6 lg:p-12 overflow-hidden">
+    
+    <!-- Ambient Aurora Mesh Glow Behind Glass Portal -->
+    <div class="pointer-events-none absolute inset-0 overflow-hidden flex items-center justify-center" aria-hidden="true">
+      <div class="absolute -top-32 -left-20 w-[500px] h-[500px] rounded-full bg-[#2B5B84]/[0.12] blur-[110px] transform-gpu"></div>
+      <div class="absolute top-1/4 -right-24 w-[540px] h-[540px] rounded-full bg-[#3B82F6]/[0.10] blur-[120px] transform-gpu"></div>
+      <div class="absolute -bottom-24 left-1/3 w-[460px] h-[460px] rounded-full bg-[#0D9488]/[0.08] blur-[100px] transform-gpu"></div>
+    </div>
+
+    <!-- Split Frosted Glass Card -->
+    <div class="relative z-10 w-full max-w-[1020px] bg-white/80 backdrop-blur-xl rounded-[28px] border border-white/90 shadow-[0_24px_50px_-12px_rgba(15,23,42,0.08),0_10px_20px_-8px_rgba(43,91,132,0.05),0_0_0_1px_rgba(226,232,240,0.8)] overflow-hidden flex flex-col md:flex-row p-3.5 sm:p-4 gap-4">
+      
+      <!-- LEFT SHOWCASE PANEL: Frosted sapphire-tinted glass with 3D motif & orbiting badges -->
+      <div class="md:w-[45%] w-full rounded-2xl bg-gradient-to-br from-[#EBF3FB]/90 via-[#E4EFF9]/80 to-[#D8E8F8]/70 border border-white/70 p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden select-none shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)]">
+        <!-- Specular shimmer gradient -->
+        <div class="absolute -top-20 -right-20 w-44 h-44 rounded-full bg-white/40 blur-2xl pointer-events-none"></div>
+        
+        <!-- Brand Header -->
+        <div class="flex items-center gap-3 z-10">
+          <a href="/" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#2B5B84] to-[#1E40AF] text-white flex items-center justify-center shadow-md shadow-[#2B5B84]/25 ring-1 ring-white/40 hover:scale-105 transition-transform" title="Back to Welcome Portal">
+            <span class="material-symbols-outlined text-[22px]">explore</span>
+          </a>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xl font-bold tracking-tight text-[#0F172A]">HANAP</span>
+              <span class="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-md bg-white/90 text-[#2B5B84] border border-slate-200/80 shadow-xs">CSPC</span>
+            </div>
+            <p class="text-[11px] font-medium text-slate-500">Nabua Campus</p>
+          </div>
+        </div>
+
+        <!-- 4-Word Headline & 3D Glass Render Motif -->
+        <div class="my-auto py-8 z-10">
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-[#0F172A] leading-[1.15] tracking-tight">
+            Find what matters most.
+          </h1>
+
+          <!-- 3D Glass Composition: Campus Essentials with Orbiting Badges -->
+          <div class="relative mt-8 h-52 w-full flex items-center justify-center">
+            <!-- Micro-Badge: Smart Match -->
+            <div class="absolute top-1 left-2 z-20 bg-white/85 backdrop-blur-md px-2.5 py-1.5 rounded-full border border-white shadow-sm flex items-center gap-1.5 transform -rotate-3 transition-transform hover:rotate-0">
+              <span class="text-xs">✨</span>
+              <span class="text-[11px] font-semibold text-slate-700 tracking-tight">92% Smart Match</span>
+            </div>
+            <!-- Micro-Badge: Privacy Shield -->
+            <div class="absolute -top-1 right-2 z-20 bg-white/85 backdrop-blur-md px-2.5 py-1.5 rounded-full border border-white shadow-sm flex items-center gap-1.5 transform rotate-2 transition-transform hover:rotate-0">
+              <span class="text-xs">🔒</span>
+              <span class="text-[11px] font-semibold text-slate-700 tracking-tight">Privacy Shield</span>
+            </div>
+            <!-- Micro-Badge: Fast Search -->
+            <div class="absolute bottom-2 left-6 z-20 bg-white/85 backdrop-blur-md px-2.5 py-1.5 rounded-full border border-white shadow-sm flex items-center gap-1.5 transform -rotate-2 transition-transform hover:rotate-0">
+              <span class="text-xs">⚡</span>
+              <span class="text-[11px] font-semibold text-slate-700 tracking-tight">&lt;3s Search</span>
+            </div>
+
+            <!-- Frosted Glass Smartphone -->
+            <div class="relative w-28 h-40 rounded-2xl bg-white/70 backdrop-blur-lg border border-white/90 shadow-xl shadow-slate-400/20 p-2.5 flex flex-col justify-between transform -rotate-6">
+              <div class="flex items-center justify-between pb-1">
+                <div class="w-8 h-1.5 rounded-full bg-slate-300/80"></div>
+                <div class="w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-emerald-100"></div>
+              </div>
+              <div class="space-y-1.5 my-auto">
+                <div class="w-full h-8 rounded-lg bg-gradient-to-r from-blue-100/60 to-slate-100/80 border border-white/60 flex items-center px-2 gap-1.5">
+                  <span class="material-symbols-outlined text-[13px] text-[#2B5B84]">search</span>
+                  <div class="w-10 h-1 bg-slate-300/70 rounded-full"></div>
+                </div>
+                <div class="h-1.5 w-3/4 bg-slate-200/80 rounded-full"></div>
+                <div class="h-1.5 w-1/2 bg-slate-200/60 rounded-full"></div>
+              </div>
+              <div class="w-8 h-1 mx-auto bg-slate-300/70 rounded-full"></div>
+            </div>
+
+            <!-- Campus Lanyard Card with Clip -->
+            <div class="absolute -right-1 top-8 w-24 h-32 rounded-xl bg-white/75 backdrop-blur-md border border-white/90 shadow-lg shadow-slate-400/15 p-2 flex flex-col items-center justify-between transform rotate-8">
+              <div class="w-4 h-1.5 bg-slate-300 rounded-full -mt-1 shadow-inner"></div>
+              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#2B5B84]/20 to-[#3B82F6]/20 border border-white flex items-center justify-center">
+                <span class="material-symbols-outlined text-base text-[#2B5B84]">badge</span>
+              </div>
+              <div class="space-y-1 w-full">
+                <div class="h-1.5 w-full bg-slate-200/90 rounded-full"></div>
+                <div class="h-1.5 w-2/3 bg-slate-200/60 rounded-full mx-auto"></div>
+              </div>
+            </div>
+
+            <!-- USB Flash Drive Widget -->
+            <div class="absolute bottom-4 right-10 w-16 h-7 rounded-lg bg-gradient-to-r from-white/90 to-slate-100/80 backdrop-blur-md border border-white shadow-md flex items-center px-2 gap-1.5 transform rotate-12">
+              <div class="w-3 h-4 rounded-xs bg-slate-300/80 border border-slate-400/40"></div>
+              <div class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></div>
+              <div class="h-1 w-5 bg-slate-200 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Accent -->
+        <div class="text-[11px] text-slate-500/80 font-medium tracking-wide flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#2B5B84]/60"></span>
+          CSPC Lost &amp; Found System
+        </div>
+      </div>
+
+      <!-- RIGHT FORM PANEL: Refined Glass Experience -->
+      <div class="md:w-[55%] w-full bg-white/50 backdrop-blur-sm p-6 sm:p-10 flex flex-col justify-between rounded-2xl">
+        <div class="space-y-5">
+          
+          <!-- Header with Top-Level Login Toggle: [ Institution ] [ Guest ] -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-2xl font-bold text-[#0F172A] tracking-tight" id="loginHeading">
+                <%= (typeof category !== 'undefined' && category === 'guest') ? 'Guest Login' : 'Institutional Login' %>
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5" id="loginSubtitle">
+                <%= (typeof category !== 'undefined' && category === 'guest') ? 'For parents, guardians, and external guests.' : 'Centralized portal for CSPC students, staff, and administrators.' %>
+              </p>
+            </div>
+
+            <!-- Segmented Category Pill Toggle -->
+            <div class="inline-flex p-1 bg-slate-100/90 backdrop-blur-md rounded-full border border-slate-200/70 shadow-inner shrink-0 self-start sm:self-auto" role="tablist" aria-label="Login Category">
+              <button class="px-4 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer <%= (typeof category !== 'undefined' && category === 'guest') ? 'text-slate-500 hover:text-slate-900' : 'bg-white text-[#2B5B84] shadow-sm' %>" id="tab-institution" data-login-category="institution" type="button" role="tab" aria-selected="<%= (typeof category === 'undefined' || category !== 'guest') %>">
+                Institution
+              </button>
+              <button class="px-4 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer <%= (typeof category !== 'undefined' && category === 'guest') ? 'bg-white text-[#2B5B84] shadow-sm' : 'text-slate-500 hover:text-slate-900' %>" id="tab-guest" data-login-category="guest" type="button" role="tab" aria-selected="<%= (typeof category !== 'undefined' && category === 'guest') %>">
+                Guest
+              </button>
+            </div>
+          </div>
+
+          <!-- Reusable HANAP Alert Container (Accessible DIV) -->
+          <div id="authAlertContainer" class="<%= (typeof errorMessage !== 'undefined' && errorMessage) || (typeof msg !== 'undefined' && msg) ? '' : 'hidden' %>" role="alert">
+            <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+              <div class="p-4 rounded-2xl bg-rose-50/90 border border-rose-200/90 text-rose-800 text-xs shadow-xs space-y-2 animate-fadeIn" id="serverErrorBox">
+                <div class="flex items-start gap-2.5">
+                  <span class="material-symbols-outlined text-rose-600 text-lg shrink-0 mt-0.5">warning</span>
+                  <div class="flex-1">
+                    <strong class="font-bold text-rose-900 block mb-0.5 text-xs">
+                      <%= typeof errorTitle !== 'undefined' && errorTitle ? errorTitle : 'Unable to sign in' %>
+                    </strong>
+                    <div class="whitespace-pre-line text-rose-700 leading-relaxed font-medium">
+                      <%= errorMessage %>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Contextual Action Buttons in Alert -->
+                <% if (typeof action !== 'undefined' && action === 'switch_to_guest') { %>
+                  <div class="pt-1.5 pl-7">
+                    <button type="button" data-login-category="guest" class="px-3.5 py-1.5 rounded-xl bg-white hover:bg-rose-100/60 text-rose-900 font-bold border border-rose-300 shadow-2xs transition-all flex items-center gap-1.5">
+                      <span>Switch to Guest</span>
+                      <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </button>
+                  </div>
+                <% } else if (typeof action !== 'undefined' && action === 'switch_to_institution') { %>
+                  <div class="pt-1.5 pl-7">
+                    <button type="button" data-login-category="institution" class="px-3.5 py-1.5 rounded-xl bg-white hover:bg-blue-100/60 text-[#09436B] font-bold border border-blue-300 shadow-2xs transition-all flex items-center gap-1.5">
+                      <span>Switch to Institution</span>
+                      <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </button>
+                  </div>
+                <% } else if (typeof action !== 'undefined' && action === 'register') { %>
+                  <div class="pt-1.5 pl-7">
+                    <a href="/register?category=institution&registered_email=<%= encodeURIComponent(typeof email !== 'undefined' ? email : '') %>" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white hover:bg-rose-100/60 text-rose-900 font-bold border border-rose-300 shadow-2xs transition-all">
+                      <span>Register Account</span>
+                      <span class="material-symbols-outlined text-sm">person_add</span>
+                    </a>
+                  </div>
+                <% } %>
+              </div>
+            <% } %>
+
+            <% if (typeof msg !== 'undefined' && msg) { %>
+              <div class="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-teal-900 text-xs shadow-xs flex items-start gap-2.5" id="serverMsgBox">
+                <span class="material-symbols-outlined text-teal-600 text-lg shrink-0 mt-0.5">check_circle</span>
+                <div class="flex-1 font-medium leading-relaxed">
+                  <%= msg %>
+                </div>
+              </div>
+            <% } %>
+          </div>
+
+          <!-- Centralized Sign-in Form -->
+          <form class="space-y-4 pt-1" action="/login" method="POST" id="loginForm" novalidate>
+            <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+            <% } %>
+            <input type="hidden" name="category" id="categoryInput" value="<%= (typeof category !== 'undefined' && category === 'guest') ? 'guest' : 'institution' %>"/>
+
+            <!-- Email Input -->
+            <div class="relative">
+              <input 
+                class="peer w-full h-12 pt-4 pb-1 px-4 bg-white/80 border rounded-xl text-sm text-[#0F172A] placeholder-transparent shadow-xs focus:outline-none focus:bg-white focus:ring-2 focus:ring-[#3B82F6]/40 focus:border-[#3B82F6] transition-all <%= (typeof invalidFields !== 'undefined' && invalidFields.includes('email')) ? 'border-rose-500 ring-2 ring-rose-200' : 'border-slate-200/80' %>" 
+                id="email" 
+                name="email" 
+                placeholder="name@my.cspc.edu.ph" 
+                type="email" 
+                autocomplete="email"
+                value="<%= typeof email !== 'undefined' ? email : '' %>"
+              />
+              <label 
+                class="absolute left-4 top-1.5 text-[11px] font-semibold text-slate-500 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-3 peer-placeholder-shown:font-normal peer-focus:top-1.5 peer-focus:text-[11px] peer-focus:font-semibold peer-focus:text-[#2B5B84] pointer-events-none" 
+                for="email" 
+                id="emailLabel">
+                <%= (typeof category !== 'undefined' && category === 'guest') ? 'Email Address' : 'CSPC Institutional Email' %>
+              </label>
+            </div>
+
+            <!-- Password Input with Eye Visibility Toggle -->
+            <div class="relative">
+              <input 
+                class="peer w-full h-12 pt-4 pb-1 pl-4 pr-12 bg-white/80 border rounded-xl text-sm text-[#0F172A] placeholder-transparent shadow-xs focus:outline-none focus:bg-white focus:ring-2 focus:ring-[#3B82F6]/40 focus:border-[#3B82F6] transition-all <%= (typeof invalidFields !== 'undefined' && invalidFields.includes('password')) ? 'border-rose-500 ring-2 ring-rose-200' : 'border-slate-200/80' %>" 
+                id="password" 
+                name="password" 
+                placeholder="Password" 
+                type="password" 
+                autocomplete="current-password"
+              />
+              <label 
+                class="absolute left-4 top-1.5 text-[11px] font-semibold text-slate-500 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-3 peer-placeholder-shown:font-normal peer-focus:top-1.5 peer-focus:text-[11px] peer-focus:font-semibold peer-focus:text-[#2B5B84] pointer-events-none" 
+                for="password">
+                Password
+              </label>
+              
+              <div class="absolute right-3.5 top-0 h-full flex items-center">
+                <button 
+                  aria-label="Toggle password visibility" 
+                  class="text-slate-400 hover:text-slate-700 transition-colors p-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/30" 
+                  data-password-field="password" data-password-icon="loginEyeIcon"
+                  type="button">
+                  <span class="material-symbols-outlined text-[19px]" id="loginEyeIcon">visibility</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Keep me signed in & Forgot Password Link -->
+            <div class="pt-0.5 flex items-center justify-between">
+              <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                <input checked class="w-4 h-4 rounded text-[#2B5B84] focus:ring-[#3B82F6] border-slate-300" type="checkbox" name="remember"/>
+                <span class="text-xs font-medium text-slate-600">Keep me signed in</span>
+              </label>
+
+              <button type="button" data-auth-action="open-recovery" class="text-xs font-semibold text-[#2B5B84] hover:text-[#0058be] hover:underline transition-colors cursor-pointer">
+                Forgot Password?
+              </button>
+            </div>
+
+            <!-- Primary CTA Button -->
+            <div class="pt-2">
+              <button 
+                class="w-full h-12 bg-gradient-to-r from-[#2B5B84] to-[#1E40AF] hover:from-[#244c70] hover:to-[#1a3899] active:scale-[0.99] text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-[0_8px_20px_-4px_rgba(43,91,132,0.4)] hover:shadow-[0_10px_24px_-4px_rgba(30,64,175,0.45)] ring-1 ring-white/20 transition-all text-center relative overflow-hidden group cursor-pointer" 
+                type="submit"
+                id="signInBtn">
+                <span class="absolute inset-x-0 top-0 h-px bg-white/35"></span>
+                <span>Sign In to HANAP</span>
+                <span class="material-symbols-outlined text-base transition-transform group-hover:translate-x-0.5">arrow_forward</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Footer Navigation Links (No Dead Links) -->
+        <div class="pt-8 flex items-center justify-between text-xs font-semibold text-slate-500 border-t border-slate-100/80 mt-6">
+          <a class="text-[#2B5B84] hover:text-[#0058be] hover:underline transition-colors" href="/register" id="createAccountLink">
+            Don't have an account? Register
+          </a>
+          <a class="text-slate-600 hover:text-[#2B5B84] flex items-center gap-1 transition-colors" href="/catalog">
+            <span>Browse Catalog</span>
+            <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Forgot Password Informational Modal Dialog -->
+  <dialog id="forgotPasswordModal" class="rounded-3xl p-0 backdrop:bg-slate-900/40 backdrop:backdrop-blur-sm border border-slate-200/80 shadow-2xl max-w-md w-full">
+    <div class="p-6 sm:p-8 space-y-5 bg-white text-on-surface rounded-3xl">
+      <div class="flex items-center justify-between">
+        <div class="w-10 h-10 rounded-2xl bg-blue-50 text-[#09436B] flex items-center justify-center">
+          <span class="material-symbols-outlined text-2xl">lock_reset</span>
+        </div>
+        <button type="button" data-auth-action="close-recovery" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-slate-900">Account Password Recovery</h3>
+        <p class="text-xs text-slate-500 mt-1">Guidance for resetting your CSPC or Guest credentials.</p>
+      </div>
+
+      <div class="space-y-3 text-xs text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+        <div>
+          <strong class="text-slate-900 block font-bold">Institutional Accounts (@cspc.edu.ph / @my.cspc.edu.ph):</strong>
+          <span>Please contact the CSPC MIS / ICT Office or the Campus Security Desk to verify your identity and reset your institutional portal credentials.</span>
+        </div>
+        <div class="pt-2 border-t border-slate-200">
+          <strong class="text-slate-900 block font-bold">Parent &amp; Guest Accounts:</strong>
+          <span>Please visit or call the Lost &amp; Found Office Desk at the Student Center to update your account password with administrative assistance.</span>
+        </div>
+      </div>
+
+      <button type="button" data-auth-action="close-recovery" class="w-full py-2.5 rounded-xl text-xs font-semibold text-white bg-[#09436B] hover:bg-[#204667] transition shadow-xs">
+        Understood
+      </button>
+    </div>
+  </dialog>
+
+  <script>
+    let activeCategory = document.getElementById('categoryInput').value;
+
+    function switchLoginCategory(cat) {
+      activeCategory = cat;
+      const tabInst = document.getElementById('tab-institution');
+      const tabGuest = document.getElementById('tab-guest');
+      const categoryInput = document.getElementById('categoryInput');
+      const heading = document.getElementById('loginHeading');
+      const subtitle = document.getElementById('loginSubtitle');
+      const emailInput = document.getElementById('email');
+      const emailLabel = document.getElementById('emailLabel');
+      const alertContainer = document.getElementById('authAlertContainer');
+      const createAccountLink = document.getElementById('createAccountLink');
+
+      // Clear previous validation states and alerts
+      clearValidationErrors();
+      if (alertContainer) {
+        alertContainer.classList.add('hidden');
+        alertContainer.innerHTML = '';
+      }
+
+      categoryInput.value = cat;
+
+      if (cat === 'institution') {
+        tabInst.className = 'px-4 py-1.5 text-xs font-semibold rounded-full bg-white text-[#2B5B84] shadow-sm transition-all cursor-pointer';
+        tabInst.setAttribute('aria-selected', 'true');
+        tabGuest.className = 'px-4 py-1.5 text-xs font-semibold rounded-full text-slate-500 hover:text-slate-900 transition-all cursor-pointer';
+        tabGuest.setAttribute('aria-selected', 'false');
+
+        heading.textContent = 'Institutional Login';
+        subtitle.textContent = 'Centralized portal for CSPC students, staff, and administrators.';
+        emailLabel.textContent = 'CSPC Institutional Email';
+        emailInput.placeholder = 'name@my.cspc.edu.ph';
+        if (createAccountLink) {
+          createAccountLink.href = '/register?category=institution';
+        }
+      } else {
+        tabGuest.className = 'px-4 py-1.5 text-xs font-semibold rounded-full bg-white text-[#2B5B84] shadow-sm transition-all cursor-pointer';
+        tabGuest.setAttribute('aria-selected', 'true');
+        tabInst.className = 'px-4 py-1.5 text-xs font-semibold rounded-full text-slate-500 hover:text-slate-900 transition-all cursor-pointer';
+        tabInst.setAttribute('aria-selected', 'false');
+
+        heading.textContent = 'Guest Login';
+        subtitle.textContent = 'For parents, guardians, and external guests.';
+        emailLabel.textContent = 'Email Address';
+        emailInput.placeholder = 'name@gmail.com';
+        if (createAccountLink) {
+          createAccountLink.href = '/register?category=guest';
+        }
+      }
+    }
+
+    function togglePasswordVisibility(fieldId, iconId) {
+      const field = document.getElementById(fieldId);
+      const icon = document.getElementById(iconId);
+      if (!field || !icon) return;
+
+      if (field.type === 'password') {
+        field.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        field.type = 'password';
+        icon.textContent = 'visibility';
+      }
+    }
+
+    function clearValidationErrors() {
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      if (emailInput) {
+        emailInput.classList.remove('border-rose-500', 'ring-2', 'ring-rose-200');
+        emailInput.classList.add('border-slate-200/80');
+      }
+      if (passwordInput) {
+        passwordInput.classList.remove('border-rose-500', 'ring-2', 'ring-rose-200');
+        passwordInput.classList.add('border-slate-200/80');
+      }
+    }
+
+    function showClientAlert(title, message, actionType = null) {
+      const alertContainer = document.getElementById('authAlertContainer');
+      if (!alertContainer) return;
+
+      let actionHtml = '';
+      if (actionType === 'switch_to_guest') {
+        actionHtml = `
+          <div class="pt-1.5 pl-7">
+            <button type="button" data-login-category="guest" class="px-3.5 py-1.5 rounded-xl bg-white hover:bg-rose-100/60 text-rose-900 font-bold border border-rose-300 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer">
+              <span>Switch to Guest</span>
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          </div>
+        `;
+      } else if (actionType === 'switch_to_institution') {
+        actionHtml = `
+          <div class="pt-1.5 pl-7">
+            <button type="button" data-login-category="institution" class="px-3.5 py-1.5 rounded-xl bg-white hover:bg-blue-100/60 text-[#09436B] font-bold border border-blue-300 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer">
+              <span>Switch to Institution</span>
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          </div>
+        `;
+      }
+
+      alertContainer.innerHTML = `
+        <div class="p-4 rounded-2xl bg-rose-50/90 border border-rose-200/90 text-rose-800 text-xs shadow-xs space-y-2 animate-fadeIn">
+          <div class="flex items-start gap-2.5">
+            <span class="material-symbols-outlined text-rose-600 text-lg shrink-0 mt-0.5">warning</span>
+            <div class="flex-1">
+              <strong class="font-bold text-rose-900 block mb-0.5 text-xs">${title}</strong>
+              <div class="whitespace-pre-line text-rose-700 leading-relaxed font-medium">${message}</div>
+            </div>
+          </div>
+          ${actionHtml}
+        </div>
+      `;
+      alertContainer.classList.remove('hidden');
+    }
+
+    function handleLoginSubmit(event) {
+      clearValidationErrors();
+
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+      const password = passwordInput ? passwordInput.value : '';
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const cspcDomains = ['my.cspc.edu.ph', 'cspc.edu.ph'];
+
+      // 1. Missing fields check
+      if (!email && !password) {
+        event.preventDefault();
+        emailInput.classList.add('border-rose-500', 'ring-2', 'ring-rose-200');
+        passwordInput.classList.add('border-rose-500', 'ring-2', 'ring-rose-200');
+        showClientAlert('Complete the required information', '• Please enter your email address.\n• Please enter your password.');
+        emailInput.focus();
+        return false;
+      }
+
+      if (!email) {
+        event.preventDefault();
+        emailInput.classList.add('border-rose-500', 'ring-2', 'ring-rose-200');
+        showClientAlert('Complete the required information', 'Please enter your email address.');
+        emailInput.focus();
+        return false;
+      }
+
+      if (!password) {
+        event.preventDefault();
+        passwordInput.classList.add('border-rose-500', 'ring-2', 'ring-rose-200');
+        showClientAlert('Complete the required information', 'Please enter your password.');
+        passwordInput.focus();
+        return false;
+      }
+
+      // 2. Email format validation
+      if (!emailRegex.test(email)) {
+        event.preventDefault();
+        emailInput.classList.add('border-rose-500', 'ring-2', 'ring-rose-200');
+        showClientAlert('Invalid email format', 'Please enter a valid email address.');
+        emailInput.focus();
+        return false;
+      }
+
+      // 3. Institution category domain validation
+      if (activeCategory === 'institution') {
+        const domain = email.split('@')[1] || '';
+        if (!cspcDomains.includes(domain)) {
+          event.preventDefault();
+          emailInput.classList.add('border-rose-500', 'ring-2', 'ring-rose-200');
+          showClientAlert(
+            'Institutional account required',
+            'The email you entered is not a recognized CSPC institutional email.\nIf you are a parent, guardian, or external guest, please select "Guest" to continue.',
+            'switch_to_guest'
+          );
+          emailInput.focus();
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    function openForgotPasswordModal() {
+      const modal = document.getElementById('forgotPasswordModal');
+      if (modal) {
+        modal.showModal();
+      }
+    }
+
+    function closeForgotPasswordModal() {
+      const modal = document.getElementById('forgotPasswordModal');
+      if (modal) {
+        modal.close();
+      }
+    }
+
+    document.addEventListener('click', (event) => {
+      const categoryButton = event.target.closest('[data-login-category]');
+      if (categoryButton) {
+        switchLoginCategory(categoryButton.dataset.loginCategory);
+        return;
+      }
+
+      const passwordButton = event.target.closest('[data-password-field]');
+      if (passwordButton) {
+        togglePasswordVisibility(passwordButton.dataset.passwordField, passwordButton.dataset.passwordIcon);
+        return;
+      }
+
+      const actionButton = event.target.closest('[data-auth-action]');
+      if (actionButton?.dataset.authAction === 'open-recovery') openForgotPasswordModal();
+      if (actionButton?.dataset.authAction === 'close-recovery') closeForgotPasswordModal();
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', handleLoginSubmit);
+  </script>
+</body>
+</html>

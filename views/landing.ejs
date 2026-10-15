@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html class="h-full landing-page" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>HANAP - CSPC Campus Lost &amp; Found Portal</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-low": "#f2f3ff",
+            "surface-container": "#eaedff",
+            "primary": "#09436b",
+            "on-primary": "#ffffff",
+            "on-surface": "#131b2e",
+            "secondary": "#0058be",
+            "primary-container": "#2b5b84",
+            "on-surface-variant": "#42474e",
+            "background": "#faf8ff",
+            "surface": "#faf8ff",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed": "#d8e2ff",
+            "secondary-fixed-dim": "#adc6ff"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="landing-page h-full w-full overflow-hidden bg-background text-on-surface font-sans antialiased select-none">
+  <main class="h-full w-full flex flex-col items-center justify-center overflow-hidden relative">
+    <div class="flex flex-col w-full h-screen overflow-hidden select-none relative items-center justify-between py-10 px-6 sm:py-12 sm:px-8 bg-surface">
+      
+      <!-- Dynamic Living Aurora Light Canvas -->
+      <div aria-hidden="true" class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute -top-32 -left-20 w-[600px] h-[600px] rounded-full bg-primary/20 blur-[130px] animate-pulse landing-aurora-one"></div>
+        <div class="absolute top-1/3 -right-28 w-[540px] h-[540px] rounded-full bg-secondary/15 blur-[120px] animate-pulse landing-aurora-two"></div>
+        <div class="absolute -bottom-24 left-1/3 w-[580px] h-[580px] rounded-full bg-blue-500/15 blur-[140px] animate-pulse landing-aurora-three"></div>
+        <div class="absolute inset-0 bg-surface/40 backdrop-blur-[40px]"></div>
+      </div>
+
+      <!-- Concentric Sonar Ripple Rings (Discovery Radar Motif) -->
+      <div aria-hidden="true" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div class="w-[340px] h-[340px] rounded-full border border-secondary/20 animate-ping opacity-25 landing-ripple"></div>
+        <div class="absolute w-[500px] h-[500px] rounded-full border border-secondary/15 shadow-[0_0_30px_rgba(0,88,190,0.04)]"></div>
+        <div class="absolute w-[680px] h-[680px] rounded-full border border-dashed border-primary/20 animate-spin landing-radar"></div>
+        <div class="absolute w-[880px] h-[880px] rounded-full border border-secondary-fixed-dim/40 opacity-40"></div>
+      </div>
+
+      <!-- Top Floating Crest Pill -->
+      <header class="relative z-20 flex items-center justify-center">
+        <div class="backdrop-blur-xl bg-white/80 border border-slate-200/60 px-5 py-2 rounded-full shadow-sm flex items-center gap-2.5 transition-transform hover:scale-[1.02] duration-300">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0058be] opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#0058be]"></span>
+          </span>
+          <span class="text-[11px] tracking-[0.25em] uppercase text-slate-600 font-semibold">
+            Camarines Sur Polytechnic Colleges
+          </span>
+          <span class="text-[#0058be]/60 text-[11px] font-semibold ml-0.5">•</span>
+          <span class="text-[11px] tracking-wider uppercase text-[#09436b] font-bold">
+            Verified Node
+          </span>
+        </div>
+      </header>
+
+      <!-- Centerpiece Composition (Monumental Type + Levitating Optical Sensor Orb) -->
+      <div class="relative z-10 flex flex-col items-center justify-center my-auto w-full max-w-4xl">
+        
+        <!-- Floating Beacon / Optical Lens Orb -->
+        <div class="flex items-center justify-center mb-6 sm:mb-8">
+          <a href="/login" aria-label="Enter HANAP Portal via central sensor" class="group relative w-28 h-28 sm:w-36 sm:h-36 rounded-full backdrop-blur-2xl bg-gradient-to-tr from-white/90 via-white/60 to-blue-100/50 shadow-xl border border-blue-200/60 flex items-center justify-center cursor-pointer transition-all duration-700 hover:scale-105 active:scale-95 focus:outline-none" id="lens-trigger">
+            <div class="absolute inset-0 rounded-full bg-gradient-to-b from-white/90 via-transparent to-[#09436b]/10 opacity-70 pointer-events-none"></div>
+            <!-- Reticle Ticks -->
+            <div class="absolute top-2 w-1.5 h-1.5 rounded-full bg-[#0058be] shadow-sm"></div>
+            <div class="absolute bottom-2 w-1.5 h-1.5 rounded-full bg-[#09436b]/40"></div>
+            <div class="absolute left-2 w-1.5 h-1.5 rounded-full bg-[#09436b]/40"></div>
+            <div class="absolute right-2 w-1.5 h-1.5 rounded-full bg-[#0058be] shadow-sm"></div>
+            <!-- Reticle Crosshairs -->
+            <div class="absolute inset-x-4 top-1/2 h-[1px] bg-gradient-to-r from-transparent via-[#09436b]/20 to-transparent pointer-events-none"></div>
+            <div class="absolute inset-y-4 left-1/2 w-[1px] bg-gradient-to-b from-transparent via-[#09436b]/20 to-transparent pointer-events-none"></div>
+            <!-- Inner Concentric Orbit Core -->
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/70 backdrop-blur-md shadow-inner flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-[#0058be]/10 via-transparent to-[#09436b]/15 animate-spin landing-orbit"></div>
+              <div class="relative z-10 flex flex-col items-center justify-center text-[#09436b] group-hover:text-[#0058be] transition-colors duration-300">
+                <div class="relative flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[28px] sm:text-[34px] text-[#09436b] transition-transform duration-500 group-hover:-translate-y-0.5">badge</span>
+                  <span class="material-symbols-outlined absolute -bottom-1 -right-2 text-[16px] sm:text-[18px] text-[#0058be] bg-white rounded-full p-0.5 shadow-md transition-transform duration-500 group-hover:rotate-12">key</span>
+                </div>
+                <div class="mt-1 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#0058be] animate-ping"></span>
+                  <span class="text-[10px] tracking-widest text-slate-500 uppercase font-semibold">SCANNING</span>
+                </div>
+              </div>
+            </div>
+            <div class="absolute -top-3 -left-3 w-16 h-16 bg-white/60 rounded-full blur-md pointer-events-none"></div>
+          </a>
+        </div>
+
+        <!-- Monumental Typography: HANAP -->
+        <div class="relative z-20 flex items-center justify-center w-full px-2 select-none">
+          <h1 class="font-extrabold tracking-[0.22em] sm:tracking-[0.28em] md:tracking-[0.32em] leading-none text-center select-none text-[64px] sm:text-[100px] md:text-[130px] lg:text-[150px] text-transparent bg-clip-text bg-gradient-to-b from-[#0F172A] via-[#09436b] to-[#2B5B84] drop-shadow-sm pl-[0.22em] sm:pl-[0.28em] md:pl-[0.32em]">
+            HANAP
+          </h1>
+        </div>
+
+        <!-- Editorial Subtitle & Poetic Resonance Headline -->
+        <div class="mt-6 sm:mt-8 flex flex-col items-center text-center px-4 max-w-2xl">
+          <div class="text-xs uppercase tracking-[0.32em] text-slate-500 mb-2.5 font-semibold">
+            Hub for Automated Notification &amp; Asset Protection
+          </div>
+          <p class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight leading-snug">
+            Welcome to HANAP.
+            <span class="block sm:inline font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#09436b] via-[#0058be] to-[#2B5B84]">
+              Lose the panic, find what’s yours.
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Footer Action & Institutional Metadata -->
+      <footer class="relative z-20 flex flex-col items-center gap-4 w-full">
+        <div class="flex items-center gap-3">
+          <a class="group relative inline-flex items-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#09436b] via-[#2B5B84] to-[#0058be] shadow-lg hover:shadow-xl hover:scale-[1.03] active:scale-[0.98] transition-all duration-300" href="/login" id="portal-cta">
+            <span class="absolute inset-0 rounded-full bg-gradient-to-r from-[#0058be] to-[#09436b] blur-md opacity-30 group-hover:opacity-60 transition-opacity duration-300 -z-10"></span>
+            <span class="tracking-wide">Enter HANAP Portal</span>
+            <span class="material-symbols-outlined text-[20px] transition-transform duration-300 group-hover:translate-x-1.5">arrow_forward</span>
+          </a>
+          <a class="px-6 py-3.5 sm:py-4 rounded-full text-sm font-semibold text-slate-700 bg-white/80 hover:bg-white border border-slate-200/80 shadow-sm hover:shadow transition-all" href="/catalog">
+            Browse Catalog
+          </a>
+        </div>
+        <div class="flex items-center gap-2 text-xs text-slate-500 tracking-wide mt-1">
+          <span>CSPC Campus Lost &amp; Found System</span>
+          <span>•</span>
+          <span>Academic Year 2024–2025</span>
+        </div>
+      </footer>
+    </div>
+  </main>
+</body>
+</html>
+

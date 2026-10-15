@@ -1,0 +1,52 @@
+.landing-page,
+.login-page,
+.register-page {
+	margin: 0;
+	padding: 0;
+	overscroll-behavior: none;
+}
+
+html.landing-page::-webkit-scrollbar,
+body.landing-page::-webkit-scrollbar,
+html.login-page::-webkit-scrollbar,
+body.login-page::-webkit-scrollbar,
+html.register-page::-webkit-scrollbar,
+body.register-page::-webkit-scrollbar {
+	display: none;
+}
+
+body.login-page main > :first-child,
+body.register-page main > :first-child {
+	margin-top: 0 !important;
+}
+
+body.login-page main > :last-child,
+body.register-page main > :last-child {
+	margin-bottom: 0 !important;
+}
+
+body.landing-page .landing-aurora-one {
+	animation-duration: 9s;
+}
+
+body.landing-page .landing-aurora-two {
+	animation-duration: 11s;
+	animation-delay: 2s;
+}
+
+body.landing-page .landing-aurora-three {
+	animation-duration: 8s;
+	animation-delay: 1s;
+}
+
+body.landing-page .landing-ripple {
+	animation-duration: 6s;
+}
+
+body.landing-page .landing-radar {
+	animation-duration: 120s;
+}
+
+body.landing-page .landing-orbit {
+	animation-duration: 16s;
+}

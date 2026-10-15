@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title><%= isCatalog ? 'Public Catalog' : 'Feed & Asset Protection' %> - HANAP CSPC</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#F4F7FB",
+            "primary": "#09436B",
+            "primary-container": "#2B5B84",
+            "on-surface": "#0F172A",
+            "text-muted": "#64748B",
+            "border-subtle": "#E2E8F0"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-[#F4F7FB] text-[#0F172A] font-sans antialiased min-h-screen relative overflow-x-hidden flex flex-col">
+
+  <!-- Ambient Aurora Canvas Background -->
+  <div aria-hidden="true" class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+    <div class="absolute -top-[15%] -left-[10%] w-[540px] h-[540px] rounded-full bg-[#2B5B84]/10 blur-[130px]"></div>
+    <div class="absolute top-[30%] -right-[10%] w-[580px] h-[580px] rounded-full bg-[#3B82F6]/10 blur-[140px]"></div>
+    <div class="absolute -bottom-[10%] left-[25%] w-[480px] h-[480px] rounded-full bg-[#0D9488]/08 blur-[120px]"></div>
+  </div>
+
+  <%- include('partials/navbar', { active: 'feed' }) %>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <!-- Flash Toasts -->
+    <% if (typeof msg !== 'undefined' && msg) { %>
+      <div class="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-teal-800 text-sm flex items-center gap-3 shadow-xs">
+        <span class="material-symbols-outlined text-teal-600">check_circle</span>
+        <span class="font-medium"><%= msg %></span>
+      </div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-center gap-3 shadow-xs">
+        <span class="material-symbols-outlined text-rose-600">error</span>
+        <span class="font-medium"><%= error %></span>
+      </div>
+    <% } %>
+
+    <!-- Top Stats Cards -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-xs flex flex-col justify-between">
+        <span class="text-xs font-bold uppercase tracking-wider text-rose-600">Active Lost</span>
+        <div class="mt-2 flex items-baseline justify-between">
+          <span class="text-3xl font-extrabold text-[#0F172A]"><%= stats.active_lost %></span>
+          <span class="material-symbols-outlined text-rose-400 text-2xl">search</span>
+        </div>
+      </div>
+      <div class="p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-xs flex flex-col justify-between">
+        <span class="text-xs font-bold uppercase tracking-wider text-teal-600">Active Found</span>
+        <div class="mt-2 flex items-baseline justify-between">
+          <span class="text-3xl font-extrabold text-[#0F172A]"><%= stats.active_found %></span>
+          <span class="material-symbols-outlined text-teal-500 text-2xl">verified</span>
+        </div>
+      </div>
+      <div class="p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-xs flex flex-col justify-between">
+        <span class="text-xs font-bold uppercase tracking-wider text-[#0058be]">Reunited / Claimed</span>
+        <div class="mt-2 flex items-baseline justify-between">
+          <span class="text-3xl font-extrabold text-[#0F172A]"><%= stats.total_claimed %></span>
+          <span class="material-symbols-outlined text-[#0058be] text-2xl">handshake</span>
+        </div>
+      </div>
+      <div class="p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-xs flex flex-col justify-between">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Total Reports</span>
+        <div class="mt-2 flex items-baseline justify-between">
+          <span class="text-3xl font-extrabold text-[#0F172A]"><%= stats.total_reports %></span>
+          <span class="material-symbols-outlined text-slate-400 text-2xl">inventory_2</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Smart Match Recommendations (if any) -->
+    <% if (smartMatches && smartMatches.length > 0) { %>
+      <div class="p-5 rounded-2xl bg-gradient-to-r from-blue-50/90 via-indigo-50/80 to-teal-50/70 border border-blue-200/70 shadow-xs">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-lg">✨</span>
+          <h2 class="text-sm font-bold text-slate-900 tracking-tight">Smart Match Recommendations for You</h2>
+          <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">Auto Detected</span>
+        </div>
+        <p class="text-xs text-slate-600 mb-4">Based on your active reports, these recent campus items may be related:</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+          <% smartMatches.forEach(match => { %>
+            <a href="/items/<%= match.id %>" class="p-3 rounded-xl bg-white/95 border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all flex items-center gap-3">
+              <div class="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
+                <% if (match.image_path) { %>
+                  <img src="<%= match.image_path %>" alt="<%= match.item_name %>" class="w-full h-full object-cover"/>
+                <% } else { %>
+                  <span class="material-symbols-outlined text-slate-400 text-xl">image</span>
+                <% } %>
+              </div>
+              <div class="overflow-hidden">
+                <span class="text-xs font-bold text-slate-900 truncate block"><%= match.item_name %></span>
+                <span class="text-[10px] text-slate-500 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[11px]">location_on</span>
+                  <%= match.location_found_lost %>
+                </span>
+                <span class="text-[9px] font-bold text-teal-700 uppercase"><%= match.report_type %></span>
+              </div>
+            </a>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- Action Toolbar & Search / Filters -->
+    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      
+      <!-- Quick Action Buttons -->
+      <% if (user) { %>
+        <div class="flex items-center gap-2.5">
+          <button onclick="openReportModal('lost')" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 shadow-sm transition-all flex items-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-base">add_circle</span>
+            <span>Report Lost Item</span>
+          </button>
+          <button onclick="openReportModal('found')" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 shadow-sm transition-all flex items-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-base">check_circle</span>
+            <span>Report Found Item</span>
+          </button>
+        </div>
+      <% } else { %>
+        <div class="text-xs text-slate-600">
+          Showing public listings. <a href="/login" class="font-bold text-[#09436B] hover:underline">Sign in</a> to submit a report or claim.
+        </div>
+      <% } %>
+
+      <!-- Search & Filter Controls -->
+      <form method="GET" action="<%= isCatalog ? '/catalog' : '/dashboard' %>" class="flex flex-wrap items-center gap-2.5">
+        <div class="relative">
+          <input type="text" name="q" value="<%= filters.q %>" placeholder="Search items, locations..." class="w-48 sm:w-60 h-10 pl-9 pr-3 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 transition shadow-2xs"/>
+          <span class="material-symbols-outlined absolute left-2.5 top-2.5 text-slate-400 text-lg">search</span>
+        </div>
+
+        <select name="type" onchange="this.form.submit()" class="h-10 px-3 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 font-medium focus:outline-none focus:border-[#3B82F6] shadow-2xs">
+          <option value="">All Types</option>
+          <option value="lost" <%= filters.type === 'lost' ? 'selected' : '' %>>Lost Only</option>
+          <option value="found" <%= filters.type === 'found' ? 'selected' : '' %>>Found Only</option>
+        </select>
+
+        <select name="category" onchange="this.form.submit()" class="h-10 px-3 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 font-medium focus:outline-none focus:border-[#3B82F6] shadow-2xs">
+          <option value="">All Categories</option>
+          <% categories.forEach(cat => { %>
+            <option value="<%= cat %>" <%= filters.category === cat ? 'selected' : '' %>><%= cat %></option>
+          <% }) %>
+        </select>
+
+        <select name="status" onchange="this.form.submit()" class="h-10 px-3 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 font-medium focus:outline-none focus:border-[#3B82F6] shadow-2xs">
+          <option value="active" <%= filters.status === 'active' ? 'selected' : '' %>>Active</option>
+          <option value="claimed" <%= filters.status === 'claimed' ? 'selected' : '' %>>Claimed</option>
+          <option value="archived" <%= filters.status === 'archived' ? 'selected' : '' %>>Archived</option>
+          <option value="all" <%= filters.status === 'all' ? 'selected' : '' %>>All Statuses</option>
+        </select>
+
+        <button type="submit" class="h-10 px-4 rounded-xl bg-[#2B5B84] hover:bg-[#09436B] text-white text-xs font-semibold shadow-2xs transition">
+          Filter
+        </button>
+      </form>
+    </div>
+
+    <!-- Items Grid Feed -->
+    <section>
+      <% if (items.length === 0) { %>
+        <div class="p-12 text-center rounded-3xl bg-white/70 backdrop-blur-md border border-slate-200/80 shadow-xs">
+          <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3 text-slate-400">
+            <span class="material-symbols-outlined text-3xl">inventory</span>
+          </div>
+          <h3 class="text-base font-bold text-slate-900">No items match your criteria</h3>
+          <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Try clearing search filters or be the first to report this item.</p>
+          <% if (user) { %>
+            <div class="mt-4 flex justify-center gap-3">
+              <button onclick="openReportModal('lost')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white">Report Lost</button>
+              <button onclick="openReportModal('found')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-teal-600 text-white">Report Found</button>
+            </div>
+          <% } %>
+        </div>
+      <% } else { %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <% items.forEach(item => { %>
+            <article class="group rounded-2xl bg-white border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.04)] hover:shadow-[0_10px_24px_-4px_rgba(43,91,132,0.12)] hover:border-slate-300 transition-all flex flex-col justify-between overflow-hidden">
+              <div>
+                <!-- Media Preview -->
+                <div class="relative w-full h-44 bg-slate-100 flex items-center justify-center overflow-hidden">
+                  <% if (item.image_path) { %>
+                    <img src="<%= item.image_path %>" alt="<%= item.item_name %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy"/>
+                  <% } else { %>
+                    <div class="flex flex-col items-center justify-center text-slate-400">
+                      <span class="material-symbols-outlined text-4xl">category</span>
+                      <span class="text-[11px] font-semibold mt-1 text-slate-400 uppercase tracking-wider"><%= item.category %></span>
+                    </div>
+                  <% } %>
+
+                  <!-- Status Badge Overlay -->
+                  <div class="absolute top-3 right-3">
+                    <% if (item.status === 'claimed') { %>
+                      <span class="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-tight bg-slate-100 text-slate-700 border border-slate-200/80 shadow-xs">
+                        Claimed
+                      </span>
+                    <% } else if (item.report_type === 'found') { %>
+                      <span class="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-tight bg-teal-50 text-teal-800 border border-teal-200 shadow-xs flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                        Found Item
+                      </span>
+                    <% } else { %>
+                      <span class="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-tight bg-rose-50 text-rose-800 border border-rose-200 shadow-xs flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                        Lost Item
+                      </span>
+                    <% } %>
+                  </div>
+                </div>
+
+                <!-- Content Details -->
+                <div class="p-4 space-y-2">
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
+                      <%= item.category %>
+                    </span>
+                    <span class="text-[11px] text-slate-400">
+                      <%= timeAgo(item.date_reported) %>
+                    </span>
+                  </div>
+
+                  <h3 class="text-sm font-bold text-[#0F172A] leading-snug line-clamp-1 group-hover:text-[#2B5B84] transition-colors">
+                    <%= item.item_name %>
+                  </h3>
+
+                  <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                    <%= item.description %>
+                  </p>
+
+                  <div class="pt-1 flex items-center gap-1 text-xs text-slate-500">
+                    <span class="material-symbols-outlined text-[15px] text-[#2B5B84]">location_on</span>
+                    <span class="truncate"><%= item.location_found_lost %></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Footer Actions -->
+              <div class="p-4 pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                <a href="/items/<%= item.id %>" class="text-xs font-semibold text-[#2B5B84] hover:text-[#09436B] hover:underline">
+                  View details
+                </a>
+                <% if (item.report_type === 'found' && item.status === 'active' && (!user || user.id !== item.user_id)) { %>
+                  <a href="/items/<%= item.id %>#claim" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-white bg-[#09436B] hover:bg-[#204667] transition shadow-xs flex items-center gap-1">
+                    <span>Claim</span>
+                    <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                  </a>
+                <% } %>
+              </div>
+            </article>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+  </main>
+
+  <!-- Report Item Modal -->
+  <% if (user) { %>
+    <div id="reportModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
+      <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-white/80 p-6 sm:p-8 space-y-6 relative overflow-hidden">
+        
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-[#0F172A] tracking-tight">Report an Item</h2>
+            <p class="text-xs text-slate-500">Share details so the campus community can reconnect it.</p>
+          </div>
+          <button onclick="closeReportModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+            <span class="material-symbols-outlined text-lg">close</span>
+          </button>
+        </div>
+
+        <!-- Form -->
+        <form action="/items/report" method="POST" enctype="multipart/form-data" class="space-y-4">
+          <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+          <% } %>
+
+          <!-- Report Type Segmented Toggle -->
+          <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-2xl gap-1">
+            <button type="button" id="typeLostBtn" onclick="setModalReportType('lost')" class="py-2 rounded-xl text-xs font-bold text-rose-700 bg-white shadow-xs transition-all text-center">
+              I Lost Something
+            </button>
+            <button type="button" id="typeFoundBtn" onclick="setModalReportType('found')" class="py-2 rounded-xl text-xs font-medium text-slate-500 transition-all text-center">
+              I Found Something
+            </button>
+          </div>
+          <input type="hidden" name="report_type" id="reportTypeInput" value="lost"/>
+
+          <!-- Item Name -->
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1" for="item_name">
+              Item Name *
+            </label>
+            <input type="text" name="item_name" id="item_name" placeholder="e.g. Blue Hydro Flask 32oz, Casio fx-991CW" required class="w-full h-11 px-3.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 transition"/>
+          </div>
+
+          <!-- Category & Location Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1" for="category">
+                Category *
+              </label>
+              <select name="category" id="category" required class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-[#3B82F6] transition">
+                <% categories.forEach(cat => { %>
+                  <option value="<%= cat %>"><%= cat %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1" for="location_found_lost">
+                Location *
+              </label>
+              <input type="text" name="location_found_lost" id="location_found_lost" placeholder="e.g. CSPC Library 2nd Floor" required class="w-full h-11 px-3.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-[#3B82F6] transition"/>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1" for="description">
+              Description &amp; Distinguishing Marks *
+            </label>
+            <textarea name="description" id="description" rows="3" placeholder="Provide distinct colors, stickers, scratches, or details..." required class="w-full p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-[#3B82F6] transition"></textarea>
+          </div>
+
+          <!-- Photo Upload -->
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1" for="photo">
+              Photo (Optional)
+            </label>
+            <input type="file" name="photo" id="photo" accept="image/jpeg,image/png,image/webp" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#09436B] hover:file:bg-blue-100 cursor-pointer"/>
+          </div>
+
+          <!-- Submit Buttons -->
+          <div class="pt-3 flex items-center justify-end gap-3">
+            <button type="button" onclick="closeReportModal()" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">
+              Cancel
+            </button>
+            <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-semibold text-white bg-[#09436B] hover:bg-[#204667] shadow-sm transition">
+              Submit Report
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  <% } %>
+
+  <script>
+    function openReportModal(type) {
+      const modal = document.getElementById('reportModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setModalReportType(type);
+      }
+    }
+
+    function closeReportModal() {
+      const modal = document.getElementById('reportModal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    function setModalReportType(type) {
+      const lostBtn = document.getElementById('typeLostBtn');
+      const foundBtn = document.getElementById('typeFoundBtn');
+      const input = document.getElementById('reportTypeInput');
+
+      if (!lostBtn || !foundBtn || !input) return;
+
+      input.value = type;
+      if (type === 'lost') {
+        lostBtn.className = 'py-2 rounded-xl text-xs font-bold text-rose-700 bg-white shadow-xs transition-all text-center';
+        foundBtn.className = 'py-2 rounded-xl text-xs font-medium text-slate-500 transition-all text-center';
+      } else {
+        foundBtn.className = 'py-2 rounded-xl text-xs font-bold text-teal-800 bg-white shadow-xs transition-all text-center';
+        lostBtn.className = 'py-2 rounded-xl text-xs font-medium text-slate-500 transition-all text-center';
+      }
+    }
+  </script>
+</body>
+</html>
