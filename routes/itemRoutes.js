@@ -1,9 +1,11 @@
 const express = require('express');
 const crypto = require('crypto');
+const fs = require('fs/promises');
 const path = require('path');
 const multer = require('multer');
 const db = require('../config/db');
 const { isAdmin, isStudent, isGuest } = require('../config/roles');
+const { ANSWER_MATCH_THRESHOLD, calculateAnswerMatch } = require('../services/answerMatch');
 
 const router = express.Router();
 
@@ -64,6 +66,34 @@ function timeAgo(d) {
     if (s < 604800) return `${Math.floor(s / 86400)}d ago`;
     return new Date(d).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
 }
+
+async function removeUploadedFile(file) {
+    if (!file) return;
+    try {
+        await fs.unlink(file.path);
+    } catch (err) {
+        if (err.code !== 'ENOENT') console.error('Failed to remove invalid report upload:', err);
+    }
+}
+
+// Auto-ensure schema columns exist in item_reports
+(async () => {
+    try {
+        const [cols] = await db.execute(`SHOW COLUMNS FROM item_reports`);
+        const colNames = cols.map(c => c.Field);
+        if (!colNames.includes('secret_challenge')) {
+            await db.execute(`ALTER TABLE item_reports ADD COLUMN secret_challenge VARCHAR(500) DEFAULT NULL`);
+        }
+        if (!colNames.includes('secret_answer')) {
+            await db.execute(`ALTER TABLE item_reports ADD COLUMN secret_answer VARCHAR(500) DEFAULT NULL`);
+        }
+        if (!colNames.includes('custody_mode')) {
+            await db.execute(`ALTER TABLE item_reports ADD COLUMN custody_mode ENUM('peer_meetup','security_desk') DEFAULT 'peer_meetup'`);
+        }
+    } catch (e) {
+        console.error('item_reports schema sync:', e.message);
+    }
+})();
 
 // Helper: Audit Logger
 async function logAudit(adminId, actionDescription, ip) {
@@ -163,12 +193,38 @@ router.get(['/dashboard', '/catalog'], async (req, res) => {
 
         // Smart Matches (if user is logged in)
         let smartMatches = [];
+        let myReports = [];
+        let recentClaim = null;
+
         if (user) {
             // Find user's active lost reports to check against found reports (or vice versa)
             const [myActiveReports] = await db.execute(
                 `SELECT * FROM item_reports WHERE user_id = ? AND status = 'active'`,
                 [user.id]
             );
+
+            // Fetch user's recent reports for progress tracker
+            const [userReportsList] = await db.execute(
+                `SELECT * FROM item_reports WHERE user_id = ? ORDER BY date_reported DESC LIMIT 4`,
+                [user.id]
+            );
+            myReports = userReportsList;
+
+            // Fetch user's latest claim for the live claim widget
+            const [latestClaims] = await db.execute(`
+                SELECT c.*, r.item_name, r.image_path, claimant.full_name AS claimant_name, reporter.full_name AS reporter_name,
+                       (SELECT message FROM claim_messages WHERE claim_id = c.id ORDER BY sent_at DESC LIMIT 1) AS last_message,
+                       (SELECT sent_at FROM claim_messages WHERE claim_id = c.id ORDER BY sent_at DESC LIMIT 1) AS last_message_at
+                FROM claims c
+                JOIN item_reports r ON r.id = c.item_id
+                JOIN users claimant ON claimant.id = c.claimant_id
+                JOIN users reporter ON reporter.id = r.user_id
+                WHERE c.claimant_id = ? OR r.user_id = ?
+                ORDER BY c.created_at DESC LIMIT 1
+            `, [user.id, user.id]);
+            if (latestClaims.length > 0) {
+                recentClaim = latestClaims[0];
+            }
 
             if (myActiveReports.length > 0) {
                 const oppositeType = myActiveReports[0].report_type === 'lost' ? 'found' : 'lost';
@@ -200,6 +256,8 @@ router.get(['/dashboard', '/catalog'], async (req, res) => {
             categories: CATEGORIES,
             filters: { q, type: typeFilter, category: catFilter, status: statusFilter },
             smartMatches,
+            myReports,
+            recentClaim,
             timeAgo,
             msg: req.query.msg || null,
             error: req.query.error || null
@@ -214,24 +272,66 @@ router.get(['/dashboard', '/catalog'], async (req, res) => {
    REPORT ITEM (LOST OR FOUND)
    ========================================================================== */
 
+// Dedicated full-page Report Item form
+router.get('/items/new', requireAuth, (req, res) => {
+    let initialType = req.query.type === 'found' ? 'found' : 'lost';
+    
+    // Guests are not allowed to report found items
+    if (isGuest(req.session.user) && initialType === 'found') {
+        return res.redirect(`/items/new?type=lost&error=${encodeURIComponent('Guests are not authorized to report found items. Please surrender found belongings directly to Campus Security.')}`);
+    }
+
+    res.render('reportItem', {
+        user: req.session.user,
+        initialType,
+        categories: CATEGORIES,
+        csrfToken: res.locals.csrfToken || '',
+        error: req.query.error || null
+    });
+});
+
 router.post('/items/report', requireAuth, upload.single('photo'), async (req, res) => {
     const reportType = req.body.report_type === 'lost' ? 'lost' : 'found';
+
+    // Strict guest security guard: guests cannot report found items
+    if (reportType === 'found' && isGuest(req.session.user)) {
+        return res.redirect(`/dashboard?error=${encodeURIComponent('Guests are not authorized to report found items. Please surrender found belongings directly to Campus Security.')}`);
+    }
+
     const itemName = typeof req.body.item_name === 'string' ? req.body.item_name.trim() : '';
     const category = typeof req.body.category === 'string' ? req.body.category.trim() : 'Other';
     const location = typeof req.body.location_found_lost === 'string' ? req.body.location_found_lost.trim() : '';
     const description = typeof req.body.description === 'string' ? req.body.description.trim() : '';
+    const secretChallenge = typeof req.body.secret_challenge === 'string' ? req.body.secret_challenge.trim() || null : null;
+    const secretAnswer = typeof req.body.secret_answer === 'string' ? req.body.secret_answer.trim() || null : null;
+    const custodyMode = req.body.custody_mode === 'security_desk' ? 'security_desk' : 'peer_meetup';
 
     if (!itemName || !location || !description) {
         return res.redirect(`/dashboard?error=${encodeURIComponent('Please fill in all required fields.')}`);
+    }
+    const invalidVerificationInput = ['secret_challenge', 'secret_answer'].some((field) => (
+        req.body[field] !== undefined && typeof req.body[field] !== 'string'
+    ));
+    if (invalidVerificationInput) {
+        await removeUploadedFile(req.file);
+        return res.redirect(`/items/new?type=${reportType}&error=${encodeURIComponent('The ownership question and answer must be plain text.')}`);
+    }
+    if (Boolean(secretChallenge) !== Boolean(secretAnswer)) {
+        await removeUploadedFile(req.file);
+        return res.redirect(`/items/new?type=${reportType}&error=${encodeURIComponent('Enter both the ownership question and its private correct answer, or leave both blank.')}`);
+    }
+    if ((secretChallenge && secretChallenge.length > 500) || (secretAnswer && secretAnswer.length > 500)) {
+        await removeUploadedFile(req.file);
+        return res.redirect(`/items/new?type=${reportType}&error=${encodeURIComponent('The ownership question and answer must each be 500 characters or fewer.')}`);
     }
 
     const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
     try {
         await db.execute(
-            `INSERT INTO item_reports (user_id, report_type, item_name, category, description, location_found_lost, image_path, status)
-             VALUES (?, ?, ?, ?, ?, ?, ?, 'active')`,
-            [req.session.user.id, reportType, itemName, category, description, location, imagePath]
+            `INSERT INTO item_reports (user_id, report_type, item_name, category, description, location_found_lost, image_path, secret_challenge, secret_answer, custody_mode, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')`,
+            [req.session.user.id, reportType, itemName, category, description, location, imagePath, secretChallenge, secretAnswer, custodyMode]
         );
 
         return res.redirect(`/dashboard?msg=${encodeURIComponent(`Successfully reported ${reportType} item: "${itemName}"`)}`);
@@ -239,6 +339,15 @@ router.post('/items/report', requireAuth, upload.single('photo'), async (req, re
         console.error('Failed to report item:', err);
         return res.redirect(`/dashboard?error=${encodeURIComponent('Failed to save report. Please try again.')}`);
     }
+});
+
+// Guest route to security desk protocol
+router.get('/claims/guest-claim', (req, res) => {
+    const caseId = req.query.case || '';
+    res.render('guestClaim', {
+        caseId,
+        user: req.session.user || null
+    });
 });
 
 /* ==========================================================================
@@ -265,6 +374,11 @@ router.get('/items/:id', async (req, res) => {
         }
 
         const item = rows[0];
+        const storedMatchResult = req.session.answerMatchResult;
+        const answerMatchScore = storedMatchResult && storedMatchResult.itemId === itemId
+            ? storedMatchResult.score
+            : null;
+        delete req.session.answerMatchResult;
 
         // Check if current user already has a pending claim on this item
         let existingClaim = null;
@@ -290,6 +404,12 @@ router.get('/items/:id', async (req, res) => {
             item,
             user,
             existingClaim,
+            hasConfiguredChallenge: typeof item.secret_challenge === 'string' &&
+                Boolean(item.secret_challenge.trim()) &&
+                typeof item.secret_answer === 'string' &&
+                Boolean(item.secret_answer.trim()),
+            answerMatchScore,
+            answerMatchThreshold: ANSWER_MATCH_THRESHOLD,
             similar,
             timeAgo,
             msg: req.query.msg || null,
@@ -308,6 +428,9 @@ router.post('/items/:id/claim', requireAuth, async (req, res) => {
     if (!proofDetails) {
         return res.redirect(`/items/${itemId}?error=${encodeURIComponent('Proof of ownership details are required.')}`);
     }
+    if (proofDetails.length > 500) {
+        return res.redirect(`/items/${itemId}?error=${encodeURIComponent('Your answer must be 500 characters or fewer.')}`);
+    }
 
     try {
         // Verify item exists and is active found
@@ -316,6 +439,10 @@ router.post('/items/:id/claim', requireAuth, async (req, res) => {
             return res.redirect('/dashboard?error=Item not found.');
         }
         const item = itemRows[0];
+
+        if (item.report_type !== 'found' || item.status !== 'active') {
+            return res.redirect(`/items/${itemId}?error=${encodeURIComponent('Only active found-item reports can receive claims.')}`);
+        }
 
         if (item.user_id === req.session.user.id) {
             return res.redirect(`/items/${itemId}?error=${encodeURIComponent('You cannot submit a claim on your own report.')}`);
@@ -328,6 +455,12 @@ router.post('/items/:id/claim', requireAuth, async (req, res) => {
         );
         if (existing.length > 0) {
             return res.redirect(`/claims/${existing[0].id}`);
+        }
+
+        const answerMatchScore = calculateAnswerMatch(proofDetails, item.secret_answer);
+        if (answerMatchScore !== null && answerMatchScore < ANSWER_MATCH_THRESHOLD) {
+            req.session.answerMatchResult = { itemId, score: answerMatchScore };
+            return res.redirect(`/items/${itemId}?error=${encodeURIComponent(`Your answer scored ${answerMatchScore}%. A match of at least ${ANSWER_MATCH_THRESHOLD}% is required to file this claim.`)}`);
         }
 
         // Insert into claims
@@ -343,7 +476,8 @@ router.post('/items/:id/claim', requireAuth, async (req, res) => {
             [claimId, req.session.user.id, `Ownership Claim Filed:\n"${proofDetails}"`]
         );
 
-        return res.redirect(`/claims/${claimId}?msg=${encodeURIComponent('Claim submitted! You can now communicate with the finder/admin.')}`);
+        req.session.answerMatchResult = { itemId, score: answerMatchScore };
+        return res.redirect(`/items/${itemId}?msg=${encodeURIComponent('Claim submitted. You can now communicate with the finder.')}`);
     } catch (err) {
         console.error('Claim submission error:', err);
         return res.redirect(`/items/${itemId}?error=Failed to submit claim.`);

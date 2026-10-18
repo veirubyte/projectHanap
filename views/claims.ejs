@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Claims Hub - Project HANAP CSPC</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#F4F7FB",
+            "primary": "#09436B",
+            "primary-container": "#2B5B84",
+            "on-surface": "#0F172A",
+            "text-muted": "#64748B",
+            "border-subtle": "#E2E8F0"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="min-h-full bg-[#F4F7FB] font-sans text-slate-800 antialiased flex flex-col justify-between relative overflow-x-hidden">
+  
+  <!-- Ambient Aurora Canvas Background -->
+  <div aria-hidden="true" class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+    <div class="absolute -top-[15%] -left-[10%] w-[540px] h-[540px] rounded-full bg-[#2B5B84]/10 blur-[130px]"></div>
+    <div class="absolute top-[30%] -right-[10%] w-[580px] h-[580px] rounded-full bg-[#3B82F6]/10 blur-[140px]"></div>
+  </div>
+
+  <%- include('partials/navbar', { active: 'claims' }) %>
+
+  <!-- Main Content -->
+  <main class="w-full max-w-[1440px] mx-auto px-3 sm:px-6 py-4 sm:py-6 flex-1 space-y-6">
+    
+    <!-- Flash Messages -->
+    <% if (typeof msg !== 'undefined' && msg) { %>
+      <div class="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-teal-800 text-xs sm:text-sm flex items-center gap-3 shadow-xs">
+        <span class="material-symbols-outlined text-teal-600">check_circle</span>
+        <span class="font-medium"><%= msg %></span>
+      </div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm flex items-center gap-3 shadow-xs">
+        <span class="material-symbols-outlined text-rose-600">error</span>
+        <span class="font-medium"><%= error %></span>
+      </div>
+    <% } %>
+
+    <!-- Header Section -->
+    <div class="rounded-2xl p-5 bg-white/75 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(15,23,42,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Claims Resolution Hub</h1>
+        <p class="text-xs text-slate-500 mt-0.5">Track ownership verification, communicate with finders/owners, and coordinate handovers.</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="/catalog" class="px-4 py-2 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 shadow-2xs transition">
+          Browse Catalog
+        </a>
+        <a href="/items/new?type=found" class="px-4 py-2 rounded-xl text-xs font-semibold bg-[#09436B] text-white hover:bg-[#204667] shadow-xs transition">
+          + Report Item
+        </a>
+      </div>
+    </div>
+
+    <!-- Dual Tab/Panel Grid: Received Claims & Claims Filed -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+      
+      <!-- Panel 1: Claims on Items You Reported (Received Claims) -->
+      <div class="rounded-3xl p-5 sm:p-6 bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_8px_30px_rgba(15,23,42,0.04)] space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Claims Received</h2>
+          </div>
+          <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full"><%= receivedClaims.length %> claims</span>
+        </div>
+
+        <% if (receivedClaims.length === 0) { %>
+          <div class="p-8 text-center text-slate-400 space-y-2">
+            <span class="material-symbols-outlined text-4xl text-slate-300">inbox</span>
+            <p class="text-xs font-medium text-slate-500">No incoming claims on your reports yet.</p>
+          </div>
+        <% } else { %>
+          <div class="space-y-3">
+            <% receivedClaims.forEach(claim => { %>
+              <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs hover:border-[#2B5B84] transition-all space-y-3">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-700 shrink-0 overflow-hidden">
+                      <% if (claim.image_path) { %>
+                        <img src="<%= claim.image_path %>" alt="" class="w-full h-full object-cover"/>
+                      <% } else { %>
+                        <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+                      <% } %>
+                    </div>
+                    <div>
+                      <h3 class="text-xs sm:text-sm font-bold text-slate-900"><%= claim.item_name %></h3>
+                      <p class="text-[11px] text-slate-500">Claimant: <strong class="text-slate-700"><%= claim.claimant_name %></strong> • <%= timeAgo(claim.created_at) %></p>
+                    </div>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase <%= claim.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : (claim.status === 'rejected' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800') %>">
+                    <%= claim.status %>
+                  </span>
+                </div>
+                
+                <p class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 line-clamp-2 italic">
+                  "<%= claim.proof_details %>"
+                </p>
+
+                <div class="flex items-center justify-between pt-1">
+                  <span class="text-[11px] text-slate-400">Claim #<%= claim.id %></span>
+                  <a href="/claims/<%= claim.id %>" class="px-3.5 py-1.5 rounded-xl bg-[#09436B] hover:bg-[#204667] text-white text-xs font-semibold shadow-2xs transition flex items-center gap-1">
+                    <span>Review &amp; Chat</span>
+                    <span class="material-symbols-outlined text-sm">chat</span>
+                  </a>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Panel 2: Claims You Filed (Claims Made) -->
+      <div class="rounded-3xl p-5 sm:p-6 bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_8px_30px_rgba(15,23,42,0.04)] space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#3B82F6]"></span>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Claims You Filed</h2>
+          </div>
+          <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full"><%= madeClaims.length %> claims</span>
+        </div>
+
+        <% if (madeClaims.length === 0) { %>
+          <div class="p-8 text-center text-slate-400 space-y-2">
+            <span class="material-symbols-outlined text-4xl text-slate-300">handshake</span>
+            <p class="text-xs font-medium text-slate-500">You haven't filed any ownership claims yet.</p>
+            <p class="text-[11px] text-slate-400">If you see your lost item in the catalog, click "Claim" to verify ownership.</p>
+          </div>
+        <% } else { %>
+          <div class="space-y-3">
+            <% madeClaims.forEach(claim => { %>
+              <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs hover:border-[#2B5B84] transition-all space-y-3">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#2B5B84] shrink-0 overflow-hidden">
+                      <% if (claim.image_path) { %>
+                        <img src="<%= claim.image_path %>" alt="" class="w-full h-full object-cover"/>
+                      <% } else { %>
+                        <span class="material-symbols-outlined text-[20px]">category</span>
+                      <% } %>
+                    </div>
+                    <div>
+                      <h3 class="text-xs sm:text-sm font-bold text-slate-900"><%= claim.item_name %></h3>
+                      <p class="text-[11px] text-slate-500">Finder: <strong class="text-slate-700"><%= claim.reporter_name %></strong> • <%= timeAgo(claim.created_at) %></p>
+                    </div>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase <%= claim.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : (claim.status === 'rejected' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800') %>">
+                    <%= claim.status %>
+                  </span>
+                </div>
+
+                <p class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 line-clamp-2">
+                  <span class="font-semibold text-slate-500">Your proof:</span> "<%= claim.proof_details %>"
+                </p>
+
+                <div class="flex items-center justify-between pt-1">
+                  <span class="text-[11px] text-slate-400">Claim #<%= claim.id %></span>
+                  <a href="/claims/<%= claim.id %>" class="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-2xs transition flex items-center gap-1">
+                    <span>Open Conversation</span>
+                    <span class="material-symbols-outlined text-sm">forum</span>
+                  </a>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full border-t border-slate-200/60 bg-white/50 backdrop-blur-md py-4 mt-8">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400 font-medium">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-700">Project HANAP</span>
+        <span>•</span>
+        <span>Camarines Sur Polytechnic Colleges</span>
+      </div>
+      <div>© 2026 CSPC Campus Care Network</div>
+    </div>
+  </footer>
+</body>
+</html>
+

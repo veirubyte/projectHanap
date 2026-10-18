@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title><%= isCatalog ? 'Public Catalog' : 'Feed & Asset Protection' %> - HANAP CSPC</title>
+  <title><%= isCatalog ? 'Browse Catalog' : 'Dashboard' %> - Project HANAP CSPC</title>
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script id="tailwind-config">
     tailwind.config = {
@@ -30,375 +37,507 @@
     };
   </script>
 </head>
-<body class="bg-[#F4F7FB] text-[#0F172A] font-sans antialiased min-h-screen relative overflow-x-hidden flex flex-col">
-
-  <!-- Ambient Aurora Canvas Background -->
-  <div aria-hidden="true" class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-    <div class="absolute -top-[15%] -left-[10%] w-[540px] h-[540px] rounded-full bg-[#2B5B84]/10 blur-[130px]"></div>
-    <div class="absolute top-[30%] -right-[10%] w-[580px] h-[580px] rounded-full bg-[#3B82F6]/10 blur-[140px]"></div>
-    <div class="absolute -bottom-[10%] left-[25%] w-[480px] h-[480px] rounded-full bg-[#0D9488]/08 blur-[120px]"></div>
+<body class="min-h-full bg-[#F4F7FB] font-sans text-slate-800 antialiased flex flex-col justify-between relative overflow-x-hidden selection:bg-sky-100 selection:text-sky-900">
+  
+  <!-- Ambient Mesh Gradient Underlays -->
+  <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+    <div class="absolute -top-[25%] left-1/2 -translate-x-1/2 w-[900px] h-[550px] bg-gradient-to-tr from-sky-200/35 via-blue-100/25 to-teal-100/30 rounded-full blur-3xl opacity-75"></div>
+    <div class="absolute top-[35%] -right-[15%] w-[650px] h-[500px] bg-gradient-to-br from-indigo-100/30 via-teal-100/25 to-slate-200/30 rounded-full blur-3xl opacity-60"></div>
+    <div class="absolute -bottom-[20%] -left-[10%] w-[700px] h-[500px] bg-gradient-to-tr from-cyan-100/25 via-slate-100/40 to-blue-200/25 rounded-full blur-3xl opacity-70"></div>
   </div>
 
-  <%- include('partials/navbar', { active: 'feed' }) %>
+  <%- include('partials/navbar', { active: isCatalog ? 'catalog' : 'dashboard' }) %>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-    
-    <!-- Flash Toasts -->
-    <% if (typeof msg !== 'undefined' && msg) { %>
-      <div class="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-teal-800 text-sm flex items-center gap-3 shadow-xs">
-        <span class="material-symbols-outlined text-teal-600">check_circle</span>
-        <span class="font-medium"><%= msg %></span>
-      </div>
-    <% } %>
-    <% if (typeof error !== 'undefined' && error) { %>
-      <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-center gap-3 shadow-xs">
-        <span class="material-symbols-outlined text-rose-600">error</span>
-        <span class="font-medium"><%= error %></span>
-      </div>
-    <% } %>
-
-    <!-- Top Stats Cards -->
-    <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-xs flex flex-col justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-rose-600">Active Lost</span>
-        <div class="mt-2 flex items-baseline justify-between">
-          <span class="text-3xl font-extrabold text-[#0F172A]"><%= stats.active_lost %></span>
-          <span class="material-symbols-outlined text-rose-400 text-2xl">search</span>
-        </div>
-      </div>
-      <div class="p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-xs flex flex-col justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-teal-600">Active Found</span>
-        <div class="mt-2 flex items-baseline justify-between">
-          <span class="text-3xl font-extrabold text-[#0F172A]"><%= stats.active_found %></span>
-          <span class="material-symbols-outlined text-teal-500 text-2xl">verified</span>
-        </div>
-      </div>
-      <div class="p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-xs flex flex-col justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-[#0058be]">Reunited / Claimed</span>
-        <div class="mt-2 flex items-baseline justify-between">
-          <span class="text-3xl font-extrabold text-[#0F172A]"><%= stats.total_claimed %></span>
-          <span class="material-symbols-outlined text-[#0058be] text-2xl">handshake</span>
-        </div>
-      </div>
-      <div class="p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-xs flex flex-col justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Total Reports</span>
-        <div class="mt-2 flex items-baseline justify-between">
-          <span class="text-3xl font-extrabold text-[#0F172A]"><%= stats.total_reports %></span>
-          <span class="material-symbols-outlined text-slate-400 text-2xl">inventory_2</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Smart Match Recommendations (if any) -->
-    <% if (smartMatches && smartMatches.length > 0) { %>
-      <div class="p-5 rounded-2xl bg-gradient-to-r from-blue-50/90 via-indigo-50/80 to-teal-50/70 border border-blue-200/70 shadow-xs">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="text-lg">✨</span>
-          <h2 class="text-sm font-bold text-slate-900 tracking-tight">Smart Match Recommendations for You</h2>
-          <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">Auto Detected</span>
-        </div>
-        <p class="text-xs text-slate-600 mb-4">Based on your active reports, these recent campus items may be related:</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-          <% smartMatches.forEach(match => { %>
-            <a href="/items/<%= match.id %>" class="p-3 rounded-xl bg-white/95 border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all flex items-center gap-3">
-              <div class="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
-                <% if (match.image_path) { %>
-                  <img src="<%= match.image_path %>" alt="<%= match.item_name %>" class="w-full h-full object-cover"/>
-                <% } else { %>
-                  <span class="material-symbols-outlined text-slate-400 text-xl">image</span>
-                <% } %>
-              </div>
-              <div class="overflow-hidden">
-                <span class="text-xs font-bold text-slate-900 truncate block"><%= match.item_name %></span>
-                <span class="text-[10px] text-slate-500 flex items-center gap-1">
-                  <span class="material-symbols-outlined text-[11px]">location_on</span>
-                  <%= match.location_found_lost %>
-                </span>
-                <span class="text-[9px] font-bold text-teal-700 uppercase"><%= match.report_type %></span>
-              </div>
-            </a>
-          <% }) %>
-        </div>
-      </div>
-    <% } %>
-
-    <!-- Action Toolbar & Search / Filters -->
-    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+  <!-- Main Dashboard Container (Width extended, side gaps deducted) -->
+  <main class="w-full flex-1 py-2 sm:py-4">
+    <div class="max-w-[1440px] w-full mx-auto px-3 sm:px-6 space-y-6">
       
-      <!-- Quick Action Buttons -->
-      <% if (user) { %>
-        <div class="flex items-center gap-2.5">
-          <button onclick="openReportModal('lost')" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 shadow-sm transition-all flex items-center gap-1.5 cursor-pointer">
-            <span class="material-symbols-outlined text-base">add_circle</span>
-            <span>Report Lost Item</span>
-          </button>
-          <button onclick="openReportModal('found')" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 shadow-sm transition-all flex items-center gap-1.5 cursor-pointer">
-            <span class="material-symbols-outlined text-base">check_circle</span>
-            <span>Report Found Item</span>
-          </button>
+      <!-- Flash Toasts -->
+      <% if (typeof msg !== 'undefined' && msg) { %>
+        <div class="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-teal-800 text-xs sm:text-sm flex items-center gap-3 shadow-xs">
+          <span class="material-symbols-outlined text-teal-600">check_circle</span>
+          <span class="font-medium"><%= msg %></span>
         </div>
-      <% } else { %>
-        <div class="text-xs text-slate-600">
-          Showing public listings. <a href="/login" class="font-bold text-[#09436B] hover:underline">Sign in</a> to submit a report or claim.
+      <% } %>
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm flex items-center gap-3 shadow-xs">
+          <span class="material-symbols-outlined text-rose-600">error</span>
+          <span class="font-medium"><%= error %></span>
         </div>
       <% } %>
 
-      <!-- Search & Filter Controls -->
-      <form method="GET" action="<%= isCatalog ? '/catalog' : '/dashboard' %>" class="flex flex-wrap items-center gap-2.5">
-        <div class="relative">
-          <input type="text" name="q" value="<%= filters.q %>" placeholder="Search items, locations..." class="w-48 sm:w-60 h-10 pl-9 pr-3 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 transition shadow-2xs"/>
-          <span class="material-symbols-outlined absolute left-2.5 top-2.5 text-slate-400 text-lg">search</span>
+      <!-- Hero Strip (Aligned with uploaded screenshot design) -->
+      <div class="rounded-3xl p-6 sm:p-8 bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_4px_24px_rgba(15,23,42,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+        <div class="space-y-1.5 z-10 max-w-xl">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl select-none">👋</span>
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900">
+              Welcome, <%= user ? user.full_name : 'Guest' %> ✨
+            </h1>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-500 font-medium">
+            Quickly report, track, and recover lost items on campus.
+          </p>
+          <div class="pt-2">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200 shadow-2xs">
+              <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+              <span>Live Recovery Ticker: <strong><%= stats.total_claimed %></strong> recovered</span>
+            </div>
+          </div>
         </div>
 
-        <select name="type" onchange="this.form.submit()" class="h-10 px-3 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 font-medium focus:outline-none focus:border-[#3B82F6] shadow-2xs">
-          <option value="">All Types</option>
-          <option value="lost" <%= filters.type === 'lost' ? 'selected' : '' %>>Lost Only</option>
-          <option value="found" <%= filters.type === 'found' ? 'selected' : '' %>>Found Only</option>
-        </select>
+        <!-- Center Backpack Asset Illustration (From screenshot) -->
+        <div class="hidden lg:flex items-center justify-center shrink-0 opacity-90 select-none pointer-events-none">
+          <svg class="w-28 h-28 text-blue-200/90" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="25" y="32" width="70" height="72" rx="28" fill="#D6E4F0" />
+            <rect x="32" y="38" width="56" height="60" rx="22" fill="#ADCBE3" />
+            <path d="M42 32V24C42 16.268 48.268 10 56 10H64C71.732 10 78 16.268 78 24V32" stroke="#4682B4" stroke-width="6" stroke-linecap="round" />
+            <rect x="42" y="62" width="36" height="28" rx="10" fill="#EAF1F8" />
+            <path d="M52 70H68" stroke="#4682B4" stroke-width="4" stroke-linecap="round" />
+            <circle cx="60" cy="50" r="4" fill="#09436B" />
+          </svg>
+        </div>
 
-        <select name="category" onchange="this.form.submit()" class="h-10 px-3 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 font-medium focus:outline-none focus:border-[#3B82F6] shadow-2xs">
-          <option value="">All Categories</option>
-          <% categories.forEach(cat => { %>
-            <option value="<%= cat %>" <%= filters.category === cat ? 'selected' : '' %>><%= cat %></option>
-          <% }) %>
-        </select>
-
-        <select name="status" onchange="this.form.submit()" class="h-10 px-3 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 font-medium focus:outline-none focus:border-[#3B82F6] shadow-2xs">
-          <option value="active" <%= filters.status === 'active' ? 'selected' : '' %>>Active</option>
-          <option value="claimed" <%= filters.status === 'claimed' ? 'selected' : '' %>>Claimed</option>
-          <option value="archived" <%= filters.status === 'archived' ? 'selected' : '' %>>Archived</option>
-          <option value="all" <%= filters.status === 'all' ? 'selected' : '' %>>All Statuses</option>
-        </select>
-
-        <button type="submit" class="h-10 px-4 rounded-xl bg-[#2B5B84] hover:bg-[#09436B] text-white text-xs font-semibold shadow-2xs transition">
-          Filter
-        </button>
-      </form>
-    </div>
-
-    <!-- Items Grid Feed -->
-    <section>
-      <% if (items.length === 0) { %>
-        <div class="p-12 text-center rounded-3xl bg-white/70 backdrop-blur-md border border-slate-200/80 shadow-xs">
-          <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3 text-slate-400">
-            <span class="material-symbols-outlined text-3xl">inventory</span>
-          </div>
-          <h3 class="text-base font-bold text-slate-900">No items match your criteria</h3>
-          <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Try clearing search filters or be the first to report this item.</p>
+        <!-- Action Buttons (Stacked Pills matching screenshot) -->
+        <div class="flex flex-col gap-3 shrink-0 z-10 w-full sm:w-auto">
           <% if (user) { %>
-            <div class="mt-4 flex justify-center gap-3">
-              <button onclick="openReportModal('lost')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white">Report Lost</button>
-              <button onclick="openReportModal('found')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-teal-600 text-white">Report Found</button>
-            </div>
+            <a href="/items/new?type=lost" class="w-full sm:w-56 h-12 px-6 rounded-full bg-[#09436B] hover:bg-[#154E77] text-white text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-between gap-4 cursor-pointer">
+              <span class="flex items-center gap-1.5">
+                <span class="text-base font-normal">+</span>
+                <span>Report Lost</span>
+              </span>
+              <span class="material-symbols-outlined text-base">chevron_right</span>
+            </a>
+            <% if (user.role !== 'parent/guest' && user.role !== 'guest' && user.role !== 'parent') { %>
+              <a href="/items/new?type=found" class="w-full sm:w-56 h-12 px-6 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs sm:text-sm font-bold shadow-2xs transition flex items-center justify-between gap-4 cursor-pointer">
+                <span class="flex items-center gap-1.5">
+                  <span class="text-base font-normal">+</span>
+                  <span>Report Found</span>
+                </span>
+                <span class="material-symbols-outlined text-base">chevron_right</span>
+              </a>
+            <% } else { %>
+              <a href="/claims/guest-claim" class="w-full sm:w-56 h-12 px-6 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs sm:text-sm font-bold shadow-2xs transition flex items-center justify-between gap-4 cursor-pointer" title="Security Desk Routing">
+                <span class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-base text-slate-600">shield</span>
+                  <span>Security Desk</span>
+                </span>
+                <span class="material-symbols-outlined text-base">chevron_right</span>
+              </a>
+            <% } %>
+          <% } else { %>
+            <a href="/login" class="w-full sm:w-56 h-12 px-6 rounded-full bg-[#09436B] hover:bg-[#154E77] text-white text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-between gap-4">
+              <span>Sign In</span>
+              <span class="material-symbols-outlined text-base">chevron_right</span>
+            </a>
           <% } %>
         </div>
-      <% } else { %>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          <% items.forEach(item => { %>
-            <article class="group rounded-2xl bg-white border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.04)] hover:shadow-[0_10px_24px_-4px_rgba(43,91,132,0.12)] hover:border-slate-300 transition-all flex flex-col justify-between overflow-hidden">
-              <div>
-                <!-- Media Preview -->
-                <div class="relative w-full h-44 bg-slate-100 flex items-center justify-center overflow-hidden">
-                  <% if (item.image_path) { %>
-                    <img src="<%= item.image_path %>" alt="<%= item.item_name %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy"/>
-                  <% } else { %>
-                    <div class="flex flex-col items-center justify-center text-slate-400">
-                      <span class="material-symbols-outlined text-4xl">category</span>
-                      <span class="text-[11px] font-semibold mt-1 text-slate-400 uppercase tracking-wider"><%= item.category %></span>
-                    </div>
-                  <% } %>
+      </div>
 
-                  <!-- Status Badge Overlay -->
-                  <div class="absolute top-3 right-3">
-                    <% if (item.status === 'claimed') { %>
-                      <span class="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-tight bg-slate-100 text-slate-700 border border-slate-200/80 shadow-xs">
-                        Claimed
-                      </span>
-                    <% } else if (item.report_type === 'found') { %>
-                      <span class="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-tight bg-teal-50 text-teal-800 border border-teal-200 shadow-xs flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
-                        Found Item
-                      </span>
-                    <% } else { %>
-                      <span class="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-tight bg-rose-50 text-rose-800 border border-rose-200 shadow-xs flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                        Lost Item
-                      </span>
-                    <% } %>
-                  </div>
+      <!-- Interactive Smart Match Spotlight Card (if any matches) -->
+      <% if (smartMatches && smartMatches.length > 0) { %>
+        <% const topMatch = smartMatches[0]; %>
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-teal-500/10 via-white/85 to-sky-500/10 backdrop-blur-xl border border-teal-200/60 p-5 sm:p-6 shadow-[0_8px_30px_rgba(13,148,136,0.08)] transition hover:border-teal-300">
+          <div class="absolute -right-12 -top-12 w-44 h-44 rounded-full bg-teal-300/20 blur-2xl pointer-events-none"></div>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+            <div class="flex items-center gap-4 min-w-0">
+              <!-- Circular Progress Ring (92%) -->
+              <div class="relative w-12 h-12 flex-shrink-0 flex items-center justify-center">
+                <svg class="w-12 h-12 -rotate-90 transform" viewBox="0 0 36 36">
+                  <path class="text-teal-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.2"></path>
+                  <path class="text-teal-600" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="92, 100" stroke-linecap="round" stroke-width="3.2"></path>
+                </svg>
+                <span class="absolute text-[11px] font-bold text-teal-800">92%</span>
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-teal-600/10 text-teal-800 text-[11px] font-bold">Smart Match</span>
+                  <span class="text-xs text-slate-500 hidden sm:inline">Discovered <%= timeAgo(topMatch.date_reported) %></span>
                 </div>
+                <p class="text-sm sm:text-base font-bold text-slate-900 truncate mt-0.5">
+                  <%= topMatch.item_name %> found at <%= topMatch.location_found_lost %>
+                </p>
+              </div>
+            </div>
+            <a href="/items/<%= topMatch.id %>" class="shrink-0 inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs sm:text-sm font-bold shadow-[0_4px_14px_rgba(13,148,136,0.3)] active:scale-95 transition">
+              <span>Review Match</span>
+              <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+            </a>
+          </div>
+        </div>
+      <% } %>
 
-                <!-- Content Details -->
-                <div class="p-4 space-y-2">
-                  <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                      <%= item.category %>
-                    </span>
-                    <span class="text-[11px] text-slate-400">
-                      <%= timeAgo(item.date_reported) %>
-                    </span>
-                  </div>
+      <!-- 4 Glass Bento KPI Tiles (Matching Screenshot Style) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Tile 1: Active Lost -->
+        <div class="p-5 rounded-3xl bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_4px_20px_rgba(15,23,42,0.03)] hover:shadow-md transition flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-11 h-11 rounded-full bg-rose-50 text-rose-500 border border-rose-100 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">search</span>
+            </div>
+            <span class="text-[11px] font-bold text-rose-600 bg-rose-50 px-3 py-1 rounded-full">Lost</span>
+          </div>
+          <div>
+            <div class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-none"><%= stats.active_lost %></div>
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-3 flex items-center justify-between">
+              <span>Active Lost</span>
+              <span class="material-symbols-outlined text-slate-400 text-base">chevron_right</span>
+            </div>
+          </div>
+        </div>
 
-                  <h3 class="text-sm font-bold text-[#0F172A] leading-snug line-clamp-1 group-hover:text-[#2B5B84] transition-colors">
-                    <%= item.item_name %>
-                  </h3>
+        <!-- Tile 2: Posted Found -->
+        <div class="p-5 rounded-3xl bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_4px_20px_rgba(15,23,42,0.03)] hover:shadow-md transition flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-11 h-11 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+            </div>
+            <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full">Found</span>
+          </div>
+          <div>
+            <div class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-none"><%= stats.active_found %></div>
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-3 flex items-center justify-between">
+              <span>Posted Found</span>
+              <span class="material-symbols-outlined text-slate-400 text-base">chevron_right</span>
+            </div>
+          </div>
+        </div>
 
-                  <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                    <%= item.description %>
-                  </p>
+        <!-- Tile 3: Reunited Total -->
+        <div class="p-5 rounded-3xl bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_4px_20px_rgba(15,23,42,0.03)] hover:shadow-md transition flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-11 h-11 rounded-full bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">handshake</span>
+            </div>
+            <span class="text-[11px] font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full">Resolved</span>
+          </div>
+          <div>
+            <div class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-none"><%= stats.total_claimed %></div>
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-3 flex items-center justify-between">
+              <span>Reunited Total</span>
+              <span class="material-symbols-outlined text-slate-400 text-base">chevron_right</span>
+            </div>
+          </div>
+        </div>
 
-                  <div class="pt-1 flex items-center gap-1 text-xs text-slate-500">
-                    <span class="material-symbols-outlined text-[15px] text-[#2B5B84]">location_on</span>
-                    <span class="truncate"><%= item.location_found_lost %></span>
-                  </div>
+        <!-- Tile 4: Recovery Rate -->
+        <% const rate = stats.total_reports > 0 ? Math.min(100, Math.round((stats.total_claimed / stats.total_reports) * 100)) : 25; %>
+        <div class="p-5 rounded-3xl bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_4px_20px_rgba(15,23,42,0.03)] hover:shadow-md transition flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-11 h-11 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">verified_user</span>
+            </div>
+            <span class="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full">Rate</span>
+          </div>
+          <div>
+            <div class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-none"><%= rate %>%</div>
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-3 flex items-center justify-between">
+              <span>Recovery Rate</span>
+              <span class="material-symbols-outlined text-slate-400 text-base">chevron_right</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dual-Column Bento Grid (65% / 35%) (Aligned with screenshot) -->
+      <% if (user) { %>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          
+          <!-- Left 65% (col-span-7 / 8): My Reported Items with 4-Step Tracker -->
+          <div class="lg:col-span-7 xl:col-span-8 rounded-3xl bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_4px_20px_rgba(15,23,42,0.03)] p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100/90 pb-4">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700">
+                  <span class="material-symbols-outlined text-lg">note_add</span>
+                </div>
+                <h2 class="text-base font-bold tracking-tight text-slate-900">My Reported Items</h2>
+                <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold">
+                  <%= myReports ? myReports.length : 0 %> active
+                </span>
+              </div>
+              <a href="/my-reports" class="text-xs font-bold text-[#09436B] hover:underline flex items-center gap-1">
+                <span>View All History</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
+
+            <% if (!myReports || myReports.length === 0) { %>
+              <!-- Empty state matching uploaded screenshot -->
+              <div class="py-10 text-center space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
+                  <span class="material-symbols-outlined text-2xl">note_add</span>
+                </div>
+                <p class="text-xs sm:text-sm font-semibold text-slate-600">You haven't reported any items yet.</p>
+                <div class="flex justify-center items-center gap-3">
+                  <a href="/items/new?type=lost" class="px-4 py-2 rounded-full border border-rose-200 text-rose-700 bg-rose-50/50 hover:bg-rose-50 text-xs font-bold transition flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm">search</span>
+                    <span>Report Lost</span>
+                  </a>
+                  <% if (user.role !== 'parent/guest' && user.role !== 'guest' && user.role !== 'parent') { %>
+                    <a href="/items/new?type=found" class="px-4 py-2 rounded-full border border-teal-200 text-teal-800 bg-teal-50/50 hover:bg-teal-50 text-xs font-bold transition flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-sm">inventory_2</span>
+                      <span>Report Found</span>
+                    </a>
+                  <% } %>
                 </div>
               </div>
+            <% } else { %>
+              <div class="space-y-3">
+                <% myReports.forEach(r => { %>
+                  <div class="rounded-2xl p-4 bg-white border border-slate-200/70 shadow-2xs hover:border-slate-300 transition space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-10 h-10 rounded-xl <%= r.report_type === 'found' ? 'bg-teal-50 border-teal-100 text-teal-700' : 'bg-rose-50 border-rose-100 text-rose-700' %> border flex items-center justify-center shrink-0 overflow-hidden">
+                          <% if (r.image_path) { %>
+                            <img src="<%= r.image_path %>" alt="" class="w-full h-full object-cover"/>
+                          <% } else { %>
+                            <span class="material-symbols-outlined text-[20px]"><%= r.report_type === 'found' ? 'inventory_2' : 'search' %></span>
+                          <% } %>
+                        </div>
+                        <div class="min-w-0">
+                          <div class="flex items-center gap-2">
+                            <h3 class="text-xs sm:text-sm font-bold text-slate-900 truncate"><%= r.item_name %></h3>
+                            <span class="shrink-0 px-2 py-0.5 rounded-full <%= r.status === 'claimed' ? 'bg-slate-100 text-slate-600' : 'bg-teal-500/10 text-teal-800' %> text-[10px] font-bold border border-teal-500/20">
+                              <%= r.status === 'claimed' ? 'Returned' : 'Active' %>
+                            </span>
+                          </div>
+                          <p class="text-[11px] text-slate-500 truncate"><%= r.location_found_lost %> • Reported <%= timeAgo(r.date_reported) %></p>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-1.5 shrink-0">
+                        <a href="/items/<%= r.id %>" class="px-3.5 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition">
+                          View
+                        </a>
+                      </div>
+                    </div>
 
-              <!-- Footer Actions -->
-              <div class="p-4 pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                <a href="/items/<%= item.id %>" class="text-xs font-semibold text-[#2B5B84] hover:text-[#09436B] hover:underline">
-                  View details
-                </a>
-                <% if (item.report_type === 'found' && item.status === 'active' && (!user || user.id !== item.user_id)) { %>
-                  <a href="/items/<%= item.id %>#claim" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-white bg-[#09436B] hover:bg-[#204667] transition shadow-xs flex items-center gap-1">
-                    <span>Claim</span>
-                    <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-                  </a>
+                    <!-- 4-step horizontal progress tracker (from ZIP2) -->
+                    <div class="pt-2 border-t border-slate-100">
+                      <div class="grid grid-cols-4 gap-1 relative text-center">
+                        <!-- Step 1: Reported -->
+                        <div class="flex flex-col items-center">
+                          <div class="w-5 h-5 rounded-full bg-teal-600 text-white flex items-center justify-center text-[10px] font-bold">✓</div>
+                          <span class="text-[10px] font-bold text-slate-700 mt-1">Reported</span>
+                        </div>
+                        <!-- Step 2: Matched -->
+                        <div class="flex flex-col items-center">
+                          <div class="w-5 h-5 rounded-full <%= r.status !== 'active' ? 'bg-teal-600 text-white' : 'bg-teal-600 text-white ring-4 ring-teal-100' %> flex items-center justify-center text-[10px] font-bold">
+                            <%= r.status === 'claimed' ? '✓' : '2' %>
+                          </div>
+                          <span class="text-[10px] font-bold text-teal-700 mt-1">Matched</span>
+                        </div>
+                        <!-- Step 3: Verifying -->
+                        <div class="flex flex-col items-center <%= r.status === 'claimed' ? '' : 'opacity-50' %>">
+                          <div class="w-5 h-5 rounded-full <%= r.status === 'claimed' ? 'bg-teal-600 text-white' : 'bg-slate-200 text-slate-600' %> flex items-center justify-center text-[10px] font-bold">
+                            <%= r.status === 'claimed' ? '✓' : '3' %>
+                          </div>
+                          <span class="text-[10px] font-medium text-slate-500 mt-1">Verifying</span>
+                        </div>
+                        <!-- Step 4: Returned -->
+                        <div class="flex flex-col items-center <%= r.status === 'claimed' ? '' : 'opacity-50' %>">
+                          <div class="w-5 h-5 rounded-full <%= r.status === 'claimed' ? 'bg-teal-600 text-white' : 'bg-slate-200 text-slate-600' %> flex items-center justify-center text-[10px] font-bold">
+                            <%= r.status === 'claimed' ? '✓' : '4' %>
+                          </div>
+                          <span class="text-[10px] font-medium text-slate-500 mt-1">Returned</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            <% } %>
+          </div>
+
+          <!-- Right 35% (col-span-5 / 4): Live Peer Claim Widget (Matching Screenshot) -->
+          <div class="lg:col-span-5 xl:col-span-4 rounded-3xl bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_4px_20px_rgba(15,23,42,0.03)] p-6 flex flex-col justify-between gap-4">
+            <div>
+              <div class="flex items-center justify-between pb-4 border-b border-slate-100/90">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800">Live Peer Claim</h2>
+                </div>
+                <% if (recentClaim) { %>
+                  <span class="text-[10px] font-bold text-slate-400">Claim #<%= recentClaim.id %></span>
                 <% } %>
               </div>
-            </article>
-          <% }) %>
+
+              <% if (recentClaim) { %>
+                <div class="mt-4 space-y-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-700 shrink-0">
+                      <span class="material-symbols-outlined text-[18px]">handshake</span>
+                    </div>
+                    <div class="min-w-0">
+                      <h4 class="text-xs sm:text-sm font-bold text-slate-900 truncate"><%= recentClaim.item_name %></h4>
+                      <p class="text-[11px] text-slate-500">Peer: <%= recentClaim.claimant_id === user.id ? recentClaim.reporter_name : recentClaim.claimant_name %></p>
+                    </div>
+                  </div>
+
+                  <!-- Mini Chat Preview Bubble -->
+                  <div class="p-3.5 rounded-2xl bg-slate-50/90 border border-slate-200/60 relative">
+                    <div class="flex items-center gap-1.5 text-[10px] font-semibold text-slate-500 mb-1">
+                      <span class="material-symbols-outlined text-[12px] text-teal-600">forum</span>
+                      <span>Latest Activity • <%= recentClaim.last_message_at ? timeAgo(recentClaim.last_message_at) : 'Active' %></span>
+                    </div>
+                    <p class="text-xs text-slate-700 italic line-clamp-2 leading-relaxed">
+                      "<%= recentClaim.last_message || recentClaim.proof_details %>"
+                    </p>
+                  </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 mt-4">
+                  <a href="/claims/<%= recentClaim.id %>" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 hover:brightness-110 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition active:scale-95 shadow-xs">
+                    <span class="material-symbols-outlined text-[16px]">chat</span>
+                    <span>Open Conversation</span>
+                  </a>
+                </div>
+              <% } else { %>
+                <!-- Quick Community Guidance Matching Screenshot -->
+                <div class="py-8 text-center space-y-3">
+                  <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#09436B] flex items-center justify-center mx-auto">
+                    <span class="material-symbols-outlined text-2xl">verified_user</span>
+                  </div>
+                  <h4 class="text-sm font-bold text-slate-900">Safe Campus Handovers</h4>
+                  <p class="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto">
+                    Always verify identifying marks or serial numbers before handing over recovered property. You can also route items to the Main Gate Guardhouse.
+                  </p>
+                  <div class="pt-2">
+                    <a href="/claims" class="inline-flex items-center gap-1 text-xs font-bold text-[#09436B] bg-sky-50 hover:bg-sky-100 px-4 py-2 rounded-full transition">
+                      <span>View Claims Hub</span>
+                      <span>&rarr;</span>
+                    </a>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          </div>
         </div>
       <% } %>
-    </section>
-  </main>
 
-  <!-- Report Item Modal -->
-  <% if (user) { %>
-    <div id="reportModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
-      <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-white/80 p-6 sm:p-8 space-y-6 relative overflow-hidden">
-        
-        <!-- Modal Header -->
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-xl font-bold text-[#0F172A] tracking-tight">Report an Item</h2>
-            <p class="text-xs text-slate-500">Share details so the campus community can reconnect it.</p>
+      <!-- Campus Items Feed Bar (Matching Screenshot Header Bar) -->
+      <div class="rounded-3xl p-4 sm:p-5 bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_4px_20px_rgba(15,23,42,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-700 shrink-0">
+            <span class="material-symbols-outlined text-xl">apartment</span>
           </div>
-          <button onclick="closeReportModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
-            <span class="material-symbols-outlined text-lg">close</span>
-          </button>
+          <div>
+            <h2 class="text-sm sm:text-base font-bold tracking-tight text-slate-900 leading-tight">Campus Items Feed</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Live active lost and found reports across CSPC Nabua Campus</p>
+          </div>
         </div>
 
-        <!-- Form -->
-        <form action="/items/report" method="POST" enctype="multipart/form-data" class="space-y-4">
-          <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
-          <% } %>
-
-          <!-- Report Type Segmented Toggle -->
-          <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-2xl gap-1">
-            <button type="button" id="typeLostBtn" onclick="setModalReportType('lost')" class="py-2 rounded-xl text-xs font-bold text-rose-700 bg-white shadow-xs transition-all text-center">
-              I Lost Something
-            </button>
-            <button type="button" id="typeFoundBtn" onclick="setModalReportType('found')" class="py-2 rounded-xl text-xs font-medium text-slate-500 transition-all text-center">
-              I Found Something
-            </button>
-          </div>
-          <input type="hidden" name="report_type" id="reportTypeInput" value="lost"/>
-
-          <!-- Item Name -->
-          <div>
-            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1" for="item_name">
-              Item Name *
-            </label>
-            <input type="text" name="item_name" id="item_name" placeholder="e.g. Blue Hydro Flask 32oz, Casio fx-991CW" required class="w-full h-11 px-3.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 transition"/>
+        <form method="GET" action="<%= isCatalog ? '/catalog' : '/dashboard' %>" class="flex flex-wrap items-center gap-2.5">
+          <div class="relative">
+            <input type="text" name="q" value="<%= filters.q %>" placeholder="Search item, location..." class="w-48 sm:w-64 h-10 pl-9 pr-4 rounded-full bg-slate-50/80 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#3B82F6] focus:bg-white shadow-2xs transition"/>
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-base">search</span>
           </div>
 
-          <!-- Category & Location Grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1" for="category">
-                Category *
-              </label>
-              <select name="category" id="category" required class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-[#3B82F6] transition">
-                <% categories.forEach(cat => { %>
-                  <option value="<%= cat %>"><%= cat %></option>
-                <% }) %>
-              </select>
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1" for="location_found_lost">
-                Location *
-              </label>
-              <input type="text" name="location_found_lost" id="location_found_lost" placeholder="e.g. CSPC Library 2nd Floor" required class="w-full h-11 px-3.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-[#3B82F6] transition"/>
-            </div>
+          <div class="relative">
+            <select name="type" onchange="this.form.submit()" class="h-10 pl-3.5 pr-8 rounded-full bg-slate-50/80 border border-slate-200 text-xs text-slate-700 font-bold focus:outline-none shadow-2xs appearance-none cursor-pointer">
+              <option value="">All Types</option>
+              <option value="lost" <%= filters.type === 'lost' ? 'selected' : '' %>>Lost Only</option>
+              <option value="found" <%= filters.type === 'found' ? 'selected' : '' %>>Found Only</option>
+            </select>
+            <span class="material-symbols-outlined absolute right-2.5 top-2.5 text-slate-400 text-sm pointer-events-none">expand_more</span>
           </div>
 
-          <!-- Description -->
-          <div>
-            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1" for="description">
-              Description &amp; Distinguishing Marks *
-            </label>
-            <textarea name="description" id="description" rows="3" placeholder="Provide distinct colors, stickers, scratches, or details..." required class="w-full p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-[#3B82F6] transition"></textarea>
+          <div class="relative">
+            <select name="category" onchange="this.form.submit()" class="h-10 pl-3.5 pr-8 rounded-full bg-slate-50/80 border border-slate-200 text-xs text-slate-700 font-bold focus:outline-none shadow-2xs appearance-none cursor-pointer">
+              <option value="">All Categories</option>
+              <% categories.forEach(cat => { %>
+                <option value="<%= cat %>" <%= filters.category === cat ? 'selected' : '' %>><%= cat %></option>
+              <% }) %>
+            </select>
+            <span class="material-symbols-outlined absolute right-2.5 top-2.5 text-slate-400 text-sm pointer-events-none">expand_more</span>
           </div>
 
-          <!-- Photo Upload -->
-          <div>
-            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1" for="photo">
-              Photo (Optional)
-            </label>
-            <input type="file" name="photo" id="photo" accept="image/jpeg,image/png,image/webp" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#09436B] hover:file:bg-blue-100 cursor-pointer"/>
-          </div>
-
-          <!-- Submit Buttons -->
-          <div class="pt-3 flex items-center justify-end gap-3">
-            <button type="button" onclick="closeReportModal()" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">
-              Cancel
-            </button>
-            <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-semibold text-white bg-[#09436B] hover:bg-[#204667] shadow-sm transition">
-              Submit Report
-            </button>
-          </div>
+          <button type="submit" class="h-10 px-5 rounded-full bg-[#09436B] hover:bg-[#154E77] text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-sm">filter_list</span>
+            <span>Filter</span>
+          </button>
         </form>
       </div>
+
+      <!-- Items Grid Gallery -->
+      <div>
+        <% if (items.length === 0) { %>
+          <div class="p-12 text-center rounded-3xl bg-white/70 backdrop-blur-md border border-slate-200/80 shadow-xs">
+            <div class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3 text-slate-400">
+              <span class="material-symbols-outlined text-3xl">inventory</span>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900">No matching campus items</h3>
+            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Try clearing search filters or report this belonging to the community.</p>
+          </div>
+        <% } else { %>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <% items.forEach(item => { %>
+              <div class="group rounded-3xl bg-white/85 backdrop-blur-xl border border-white/90 overflow-hidden shadow-[0_4px_20px_rgba(15,23,42,0.03)] hover:border-slate-300 hover:shadow-md transition flex flex-col justify-between">
+                <div>
+                  <!-- Image / Fallback -->
+                  <div class="p-3 pb-0">
+                    <div class="h-36 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200/80 flex items-center justify-center relative overflow-hidden">
+                      <% if (item.image_path) { %>
+                        <img src="<%= item.image_path %>" alt="<%= item.item_name %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+                      <% } else { %>
+                        <span class="material-symbols-outlined text-slate-400 text-[36px]">
+                          <%= item.category === 'Electronics' ? 'devices' : (item.category === 'Keys & Lanyards' ? 'badge' : 'category') %>
+                        </span>
+                      <% } %>
+                      
+                      <!-- Masked Badge -->
+                      <span class="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-white/90 backdrop-blur-md text-slate-700 text-[10px] font-bold flex items-center gap-1 shadow-2xs border border-white/60">
+                        <span class="material-symbols-outlined text-[11px]">lock</span>
+                        <span><%= item.report_type === 'found' ? 'Found' : 'Lost' %></span>
+                      </span>
+
+                      <% if (item.status === 'claimed') { %>
+                        <span class="absolute top-2 right-2 px-2.5 py-0.5 rounded-full bg-slate-900/80 text-white text-[10px] font-bold">
+                          Claimed
+                        </span>
+                      <% } %>
+                    </div>
+                  </div>
+
+                  <!-- Details -->
+                  <div class="p-4 space-y-2">
+                    <div>
+                      <h3 class="text-xs sm:text-sm font-bold text-slate-900 truncate"><%= item.item_name %></h3>
+                      <div class="inline-flex items-center gap-1 text-[11px] text-slate-500 mt-0.5">
+                        <span class="material-symbols-outlined text-[13px] text-slate-400">location_on</span>
+                        <span class="truncate"><%= item.location_found_lost %></span>
+                      </div>
+                    </div>
+                    <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                      <%= item.description %>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Footer CTA -->
+                <div class="p-4 pt-0">
+                  <a href="/items/<%= item.id %>" class="w-full py-2.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-800 text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-2xs hover:border-[#2B5B84]">
+                    <span>View Details</span>
+                    <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                  </a>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
     </div>
-  <% } %>
+  </main>
 
-  <script>
-    function openReportModal(type) {
-      const modal = document.getElementById('reportModal');
-      if (modal) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        setModalReportType(type);
-      }
-    }
-
-    function closeReportModal() {
-      const modal = document.getElementById('reportModal');
-      if (modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-      }
-    }
-
-    function setModalReportType(type) {
-      const lostBtn = document.getElementById('typeLostBtn');
-      const foundBtn = document.getElementById('typeFoundBtn');
-      const input = document.getElementById('reportTypeInput');
-
-      if (!lostBtn || !foundBtn || !input) return;
-
-      input.value = type;
-      if (type === 'lost') {
-        lostBtn.className = 'py-2 rounded-xl text-xs font-bold text-rose-700 bg-white shadow-xs transition-all text-center';
-        foundBtn.className = 'py-2 rounded-xl text-xs font-medium text-slate-500 transition-all text-center';
-      } else {
-        foundBtn.className = 'py-2 rounded-xl text-xs font-bold text-teal-800 bg-white shadow-xs transition-all text-center';
-        lostBtn.className = 'py-2 rounded-xl text-xs font-medium text-slate-500 transition-all text-center';
-      }
-    }
-  </script>
+  <!-- Footer -->
+  <footer class="w-full border-t border-slate-200/60 bg-white/50 backdrop-blur-md py-4 mt-8">
+    <div class="max-w-[1440px] mx-auto px-6 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-800">Project HANAP</span>
+        <span>•</span>
+        <span>Camarines Sur Polytechnic Colleges</span>
+      </div>
+      <div>© 2026 CSPC Campus Care Network</div>
+    </div>
+  </footer>
 </body>
 </html>

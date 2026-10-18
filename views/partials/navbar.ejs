@@ -1,0 +1,81 @@
+<!-- Floating Glass Navbar Dock (Styled to exact visual spec) -->
+<header class="sticky top-3 sm:top-4 z-50 px-3 sm:px-6 mb-5 sm:mb-6 w-full">
+  <div class="max-w-[1440px] mx-auto rounded-3xl sm:rounded-[28px] bg-white/95 backdrop-blur-xl border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.04)] px-4 sm:px-6 py-2.5 min-h-[68px] flex items-center justify-between gap-4 transition-all">
+    
+    <!-- Left: Brand / Logo Section -->
+    <a class="flex items-center gap-3.5 group shrink-0" href="/dashboard">
+      <div class="w-11 h-11 rounded-2xl bg-[#E5F0FD] flex items-center justify-center text-[#1E3A5F] group-hover:scale-105 transition-transform">
+        <span class="material-symbols-outlined text-[24px]">explore</span>
+      </div>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2 leading-none">
+          <span class="font-bold tracking-tight text-[#1E3A5F] text-base sm:text-lg">Project HANAP</span>
+          <span class="px-2 py-0.5 rounded-md bg-[#EEF2F6] text-[#64748B] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">CSPC</span>
+        </div>
+        <span class="text-xs text-[#64748B] font-medium leading-none mt-1 hidden sm:inline">Campus Lost &amp; Found Portal</span>
+      </div>
+    </a>
+
+    <!-- Center: Primary Navigation Links (Inline, single-line capsule track) -->
+    <nav class="hidden lg:flex items-center flex-nowrap shrink-0 gap-1 p-1 bg-[#F4F7FB] rounded-full border border-slate-100/90 shadow-2xs whitespace-nowrap">
+      <a href="/dashboard" class="whitespace-nowrap inline-flex items-center shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all <%= (typeof active !== 'undefined' && active === 'dashboard') ? 'bg-white text-[#1E3A5F] font-bold shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-slate-100' : 'text-slate-600 hover:text-slate-900' %>">Dashboard</a>
+      <a href="/catalog" class="whitespace-nowrap inline-flex items-center shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all <%= (typeof active !== 'undefined' && active === 'catalog') ? 'bg-white text-[#1E3A5F] font-bold shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-slate-100' : 'text-slate-600 hover:text-slate-900' %>">Browse Catalog</a>
+      <a href="/items/new?type=lost" class="whitespace-nowrap inline-flex items-center shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all <%= (typeof active !== 'undefined' && active === 'report-lost') ? 'bg-white text-[#1E3A5F] font-bold shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-slate-100' : 'text-slate-600 hover:text-slate-900' %>">+ Report Lost Item</a>
+      <% if (typeof user === 'undefined' || !user || (user.role !== 'parent/guest' && user.role !== 'guest' && user.role !== 'parent')) { %>
+        <a href="/items/new?type=found" class="whitespace-nowrap inline-flex items-center shrink-0 px-4.5 py-2 rounded-full text-sm font-semibold transition-all <%= (typeof active !== 'undefined' && active === 'report-found') ? 'bg-white text-[#1E3A5F] font-bold shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-slate-100' : 'text-slate-600 hover:text-slate-900' %>">+ Report Found Item</a>
+      <% } %>
+      <% if (typeof user !== 'undefined' && user) { %>
+        <a href="/claims" class="whitespace-nowrap inline-flex items-center shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all <%= (typeof active !== 'undefined' && active === 'claims') ? 'bg-white text-[#1E3A5F] font-bold shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-slate-100' : 'text-slate-600 hover:text-slate-900' %>">Claims</a>
+        <a href="/my-reports" class="whitespace-nowrap inline-flex items-center shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all <%= (typeof active !== 'undefined' && active === 'my-reports') ? 'bg-white text-[#1E3A5F] font-bold shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-slate-100' : 'text-slate-600 hover:text-slate-900' %>">My Reports</a>
+        <% if (user.role === 'admin') { %>
+          <a href="/admin/dashboard" class="whitespace-nowrap inline-flex items-center shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all <%= (typeof active !== 'undefined' && active === 'admin') ? 'bg-white text-indigo-700 font-bold shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-slate-100' : 'text-indigo-600 hover:text-indigo-900' %>">Admin Portal</a>
+        <% } %>
+      <% } %>
+    </nav>
+
+    <!-- Right Controls: Notifications, User Profile & Logout -->
+    <div class="flex items-center gap-3 sm:gap-4 shrink-0">
+      <% if (typeof user !== 'undefined' && user) { %>
+        <!-- Notification bell with count badge (matching screenshot) -->
+        <a href="/claims" aria-label="Notifications" class="relative p-1.5 text-slate-600 hover:text-slate-900 transition-colors flex items-center justify-center" title="Notifications">
+          <span class="material-symbols-outlined text-[23px]">notifications</span>
+          <span class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-[#1D63B8] text-white text-[10px] font-bold flex items-center justify-center shadow-xs ring-1 ring-white">2</span>
+        </a>
+
+        <!-- Vertical Divider -->
+        <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
+
+        <!-- User Profile (Dark blue avatar + name stack + role pill) -->
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-[#164E87] text-white flex items-center justify-center shadow-xs shrink-0">
+            <span class="material-symbols-outlined text-[20px]">person</span>
+          </div>
+          <div class="hidden sm:flex flex-col text-left leading-tight whitespace-nowrap">
+            <div class="flex items-center gap-1.5 whitespace-nowrap">
+              <span class="font-bold text-slate-800 text-sm max-w-[130px] truncate whitespace-nowrap"><%= user.full_name %></span>
+              <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold capitalize whitespace-nowrap shrink-0">
+                <%= (user.role === 'student/staff') ? 'Student' : (user.role === 'admin' ? 'Admin' : 'Guest') %>
+              </span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-medium mt-0.5 whitespace-nowrap">BSIT - CSPC</span>
+          </div>
+        </div>
+
+        <!-- Logout button (Door icon + text) -->
+        <a href="/logout" class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 hover:text-rose-600 transition-colors ml-1 sm:ml-2 group whitespace-nowrap shrink-0" title="Sign out of HANAP">
+          <span class="material-symbols-outlined text-[20px] transition-transform group-hover:translate-x-0.5">logout</span>
+          <span class="hidden sm:inline whitespace-nowrap">Logout</span>
+        </a>
+      <% } else { %>
+        <a href="/login" class="px-5 py-2 rounded-full text-sm font-bold text-white bg-[#09436B] hover:bg-[#204667] transition-all shadow-xs">
+          Sign In
+        </a>
+        <a href="/register" class="px-5 py-2 rounded-full text-sm font-bold text-[#09436B] bg-white hover:bg-slate-50 border border-slate-200 transition-all shadow-xs hidden sm:inline">
+          Create Account
+        </a>
+      <% } %>
+    </div>
+  </div>
+</header>
+
+

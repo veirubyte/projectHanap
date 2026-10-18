@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Claim #<%= claim.id %> Chat - Project HANAP CSPC</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#F4F7FB",
+            "primary": "#09436B",
+            "primary-container": "#2B5B84",
+            "on-surface": "#0F172A",
+            "text-muted": "#64748B",
+            "border-subtle": "#E2E8F0"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="min-h-full bg-[#F4F7FB] font-sans text-slate-800 antialiased flex flex-col justify-between relative overflow-x-hidden">
+  
+  <!-- Ambient Aurora Canvas Background -->
+  <div aria-hidden="true" class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+    <div class="absolute -top-[15%] -left-[10%] w-[540px] h-[540px] rounded-full bg-[#2B5B84]/10 blur-[130px]"></div>
+    <div class="absolute top-[30%] -right-[10%] w-[580px] h-[580px] rounded-full bg-[#3B82F6]/10 blur-[140px]"></div>
+  </div>
+
+  <%- include('partials/navbar', { active: 'claims' }) %>
+
+  <!-- Main Chat Container -->
+  <main class="w-full max-w-5xl mx-auto px-3 sm:px-6 py-4 flex-1 flex flex-col space-y-4">
+    
+    <!-- Flash Messages -->
+    <% if (typeof msg !== 'undefined' && msg) { %>
+      <div class="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-teal-800 text-xs sm:text-sm flex items-center gap-3 shadow-xs">
+        <span class="material-symbols-outlined text-teal-600">check_circle</span>
+        <span class="font-medium"><%= msg %></span>
+      </div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm flex items-center gap-3 shadow-xs">
+        <span class="material-symbols-outlined text-rose-600">error</span>
+        <span class="font-medium"><%= error %></span>
+      </div>
+    <% } %>
+
+    <!-- Claim & Item Card Banner -->
+    <div class="rounded-3xl p-5 bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_4px_24px_rgba(15,23,42,0.04)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="/claims" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition" title="Back to Claims Hub">
+          <span class="material-symbols-outlined text-lg">arrow_back</span>
+        </a>
+        <div class="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-[#2B5B84] shrink-0 overflow-hidden">
+          <% if (claim.image_path) { %>
+            <img src="<%= claim.image_path %>" alt="" class="w-full h-full object-cover"/>
+          <% } else { %>
+            <span class="material-symbols-outlined text-2xl">category</span>
+          <% } %>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm sm:text-base font-bold text-slate-900"><%= claim.item_name %></h1>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase <%= claim.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : (claim.status === 'rejected' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800') %>">
+              <%= claim.status %>
+            </span>
+          </div>
+          <p class="text-xs text-slate-500">
+            Claimant: <strong class="text-slate-700"><%= claim.claimant_name %></strong> | Finder/Reporter: <strong class="text-slate-700"><%= claim.reporter_name %></strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Controls for Finder or Admin -->
+      <% if (claim.status === 'pending' && (userIsReporter || userIsAdmin)) { %>
+        <div class="flex items-center gap-2 shrink-0">
+          <form action="/claims/<%= claim.id %>/status" method="POST" class="inline" onsubmit="return confirm('Approve this ownership claim? The item will be marked as claimed.');">
+            <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+            <% } %>
+            <input type="hidden" name="action" value="approved"/>
+            <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition flex items-center gap-1 cursor-pointer">
+              <span class="material-symbols-outlined text-sm">check</span>
+              <span>Approve Claim</span>
+            </button>
+          </form>
+
+          <form action="/claims/<%= claim.id %>/status" method="POST" class="inline" onsubmit="return confirm('Reject this ownership claim?');">
+            <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+            <% } %>
+            <input type="hidden" name="action" value="rejected"/>
+            <button type="submit" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition cursor-pointer">
+              <span>Reject</span>
+            </button>
+          </form>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Proof Statement Header -->
+    <div class="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-xs text-amber-900">
+      <span class="font-bold">Original Ownership Proof Provided by <%= claim.claimant_name %>:</span>
+      <p class="mt-1 whitespace-pre-line text-slate-800 font-medium">"<%= claim.proof_details %>"</p>
+    </div>
+
+    <!-- Messages Chat Box -->
+    <div class="flex-1 rounded-3xl p-5 bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_8px_30px_rgba(15,23,42,0.04)] flex flex-col justify-between min-h-[360px] space-y-4">
+      
+      <!-- Message Stream -->
+      <div class="space-y-3.5 overflow-y-auto max-h-[480px] pr-2">
+        <% if (messages.length === 0) { %>
+          <div class="text-center py-12 text-slate-400 text-xs">
+            <span class="material-symbols-outlined text-3xl mb-1">chat_bubble_outline</span>
+            <p>No messages yet. Send a message below to coordinate handover details.</p>
+          </div>
+        <% } else { %>
+          <% messages.forEach(msg => { %>
+            <% const isMe = msg.sender_id === user.id; %>
+            <div class="flex flex-col <%= isMe ? 'items-end' : 'items-start' %>">
+              <div class="flex items-center gap-1.5 mb-1 text-[11px] text-slate-400">
+                <span class="font-bold text-slate-700"><%= isMe ? 'You' : msg.sender_name %></span>
+                <span>•</span>
+                <span><%= timeAgo(msg.sent_at) %></span>
+              </div>
+              <div class="p-3.5 rounded-2xl max-w-md text-xs leading-relaxed <%= isMe ? 'bg-[#09436B] text-white rounded-tr-xs shadow-xs' : 'bg-slate-100 text-slate-800 rounded-tl-xs border border-slate-200/70' %>">
+                <p class="whitespace-pre-line"><%= msg.message %></p>
+              </div>
+            </div>
+          <% }) %>
+        <% } %>
+      </div>
+
+      <!-- Send Input Form -->
+      <form action="/claims/<%= claim.id %>/messages" method="POST" class="pt-3 border-t border-slate-100 flex items-center gap-2">
+        <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+        <% } %>
+        <input 
+          type="text" 
+          name="message" 
+          placeholder="Type your reply, meetup coordination details, or clarification..." 
+          required 
+          autocomplete="off"
+          class="flex-1 h-11 px-4 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 transition"
+        />
+        <button type="submit" class="h-11 px-5 rounded-xl bg-gradient-to-r from-[#2B5B84] to-[#09436B] hover:brightness-110 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition cursor-pointer">
+          <span>Send</span>
+          <span class="material-symbols-outlined text-sm">send</span>
+        </button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>
+
